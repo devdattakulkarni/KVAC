@@ -41,16 +41,9 @@ public class HBaseAccessor implements KVStoreInterface {
         return value;
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("HBase Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
-        String user = "devdatta";
-        HBaseAccessor hbase = new HBaseAccessor(policyFilePath, user);
-        String keyspace = "PatientInfoSystem";
-        String columnFamily = "Patient";
-        String rowKey = "john";
-        String columnKey = "name";
-        String colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey);
-        System.out.println("Column Value:" + colValue);
+    public void put(String keyspace, String columnFamily, String rowKey,
+        String columnKey, String value) throws Exception {
+   
+        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value);        
     }
 }

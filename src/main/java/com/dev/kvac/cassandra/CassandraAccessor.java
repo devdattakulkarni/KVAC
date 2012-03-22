@@ -25,11 +25,11 @@ public class CassandraAccessor implements KVStoreInterface {
         this.cassandraUtil = new CassandraUtil(user, password, keyspace);
         this.cassandraUtil.connect(server, port);
     }
-    
+
     public CassandraUtil getCassandraUtil() {
         return cassandraUtil;
     }
-    
+
     public String get(String keyspace, String columnFamily, String rowKey,
         String columnKey) throws Exception {
 
@@ -46,11 +46,16 @@ public class CassandraAccessor implements KVStoreInterface {
         }
 
         return value;
-    }    
-    
+    }
+
+    public void put(String keyspace, String columnFamily, String rowKey,
+        String columnKey, String value) throws Exception {
+        // TODO Auto-generated method stub
+    }
+
     public String getUser() {
         return user;
-    }    
+    }
 
     public static void main(String args[]) throws Exception {
         System.out.println("Cassandra Client");
@@ -73,4 +78,5 @@ public class CassandraAccessor implements KVStoreInterface {
             columnKey);
         System.out.println("Column Value:" + colValue);
     }
+
 }

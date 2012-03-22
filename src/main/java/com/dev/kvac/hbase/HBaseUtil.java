@@ -3,6 +3,7 @@ package com.dev.kvac.hbase;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 
 public final class HBaseUtil {
@@ -14,7 +15,7 @@ public final class HBaseUtil {
         HTable htable = new HTable(keyspace);
         Get get = new Get(rowKey.getBytes());
         Result res = htable.get(get);
-        // System.out.println(res.getBytes().toString());
+
         KeyValue[] data = res.raw();
 
         for (int i = 0; i < data.length; i++) {
@@ -32,4 +33,17 @@ public final class HBaseUtil {
         return columnValue;
     }
 
+    public static void put(String keyspace, String columnFamily, String rowKey,
+        String columnKey, String value) throws Exception {
+        HTable htable = new HTable(keyspace);
+        Put put = new Put(rowKey.getBytes());
+        put
+            .add(columnFamily.getBytes(), columnKey.getBytes(), value
+                .getBytes());
+        htable.put(put);
+    }
+
+    public static void delete() {
+
+    }
 }
