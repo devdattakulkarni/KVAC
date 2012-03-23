@@ -15,6 +15,7 @@ import org.w3c.dom.NodeList;
 
 import com.dev.kvac.cassandra.CassandraAccessor;
 import com.dev.kvac.hbase.HBaseUtil;
+import com.dev.kvac.mongodb.MongoDBAccessor;
 
 public final class Evaluator {
 
@@ -146,7 +147,9 @@ public final class Evaluator {
             if (storeType.equalsIgnoreCase("cassandra")) {
                 columnValue = ((CassandraAccessor)kvstore).getCassandraUtil().executeGet(columnFamily, rowKey, column);
             }
-
+            if (storeType.equalsIgnoreCase("mongodb")) {
+                columnValue = ((MongoDBAccessor)kvstore).getUtil().get(keyspace,columnFamily, rowKey, column);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

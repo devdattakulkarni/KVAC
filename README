@@ -1,0 +1,8 @@
+Running Instructions:
+
+- Start MongoDB Database Server process
+  - Go to directory where you have downloaded MongoDB
+  - Execute ./bin/mongod from command line
+    - You may not be able to execute above command if the prior run of the process 
+      was not cleanly shut-down. In such a scenario, you can delete the /data/db/mongod.lock file
+      and then run mongod.
