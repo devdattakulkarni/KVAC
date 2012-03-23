@@ -33,7 +33,7 @@ public class CassandraUtil {
         sessionState = new CliSessionState();
         sessionState.username = user;
         sessionState.password = password;
-        sessionState.keyspace = keyspace;// "PatientInfoSystem";
+        sessionState.keyspace = keyspace;
         sessionState.debug = true;
     }
 

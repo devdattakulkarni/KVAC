@@ -1,0 +1,8 @@
+The Policy file(s) should be read by the evaluator class. We should 
+instantiate an evaluator for each policy file.
+
+The evaluate interface can then be changed to 
+
+evaluate(keyspace, columnFamily, rowKey, columnKey) instead of the current
+
+evaluate(rowKey, whereNode)
