@@ -1,6 +1,7 @@
 package com.dev.kvac.hbase;
 
 import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
@@ -43,7 +44,9 @@ public final class HBaseUtil {
         htable.put(put);
     }
 
-    public static void delete() {
-
+    public static void clean(String keyspace, String rowKey) throws Exception {
+        HTable htable = new HTable(keyspace);
+        Delete rowToDelete = new Delete(rowKey.getBytes());
+        htable.delete(rowToDelete);
     }
 }

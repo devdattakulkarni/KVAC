@@ -6,3 +6,11 @@ Running Instructions:
     - You may not be able to execute above command if the prior run of the process 
       was not cleanly shut-down. In such a scenario, you can delete the /data/db/mongod.lock file
       and then run mongod.
+  - Run tests from MongoDBAccessorTest
+      
+- Start HBase
+  - Go to directory where you have downloaded HBase
+  - Execute ./bin/start-hbase.sh
+  - Run tests from HBaseAccessorTest
+  
+- 

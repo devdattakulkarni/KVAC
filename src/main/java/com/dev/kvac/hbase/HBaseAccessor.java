@@ -46,4 +46,8 @@ public class HBaseAccessor implements KVStoreInterface {
    
         HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value);        
     }
+    
+    public void clean(String keyspace, String rowKey) throws Exception {
+        HBaseUtil.clean(keyspace, rowKey);
+    }
 }
