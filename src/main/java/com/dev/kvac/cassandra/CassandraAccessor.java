@@ -2,6 +2,7 @@ package com.dev.kvac.cassandra;
 
 import java.util.Map;
 
+import org.apache.cassandra.thrift.CfDef;
 import org.w3c.dom.Node;
 
 import com.dev.kvac.Evaluator;
@@ -42,7 +43,7 @@ public class CassandraAccessor implements KVStoreInterface {
 
         String value = null;
         if (result) {
-            value = cassandraUtil.executeGet(columnFamily, rowKey, columnKey);
+            value = cassandraUtil.get(columnFamily, rowKey, columnKey);
         }
 
         return value;
@@ -50,7 +51,21 @@ public class CassandraAccessor implements KVStoreInterface {
 
     public void put(String keyspace, String columnFamily, String rowKey,
         String columnKey, String value) throws Exception {
-        // TODO Auto-generated method stub
+        cassandraUtil.add(columnFamily, rowKey, columnKey, value);
+    }
+
+    public void delete(String columnFamily, String rowKey, String column)
+        throws Exception {
+        cassandraUtil.delete(columnFamily, rowKey, column);
+    }
+
+    public void dropColumnFamily(String columnFamily) throws Exception {
+        cassandraUtil.dropColumnFamily(columnFamily);
+    }
+
+    public void addColumnFamily(String keyspace, String columnFamily)
+        throws Exception {
+        cassandraUtil.addColumnFamily(keyspace, columnFamily);
     }
 
     public String getUser() {

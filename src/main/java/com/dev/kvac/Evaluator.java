@@ -145,7 +145,7 @@ public final class Evaluator {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column);
             }
             if (storeType.equalsIgnoreCase("cassandra")) {
-                columnValue = ((CassandraAccessor)kvstore).getCassandraUtil().executeGet(columnFamily, rowKey, column);
+                columnValue = ((CassandraAccessor)kvstore).getCassandraUtil().get(columnFamily, rowKey, column);
             }
             if (storeType.equalsIgnoreCase("mongodb")) {
                 columnValue = ((MongoDBAccessor)kvstore).getUtil().get(keyspace,columnFamily, rowKey, column);

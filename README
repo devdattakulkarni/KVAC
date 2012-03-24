@@ -13,4 +13,7 @@ Running Instructions:
   - Execute ./bin/start-hbase.sh
   - Run tests from HBaseAccessorTest
   
-- 
+- Start Cassandra
+  - Go to directory where you have downloaded Cassandra
+  - Execute ./bin/cassandra
+  - Run tests from CassandraAccessorTest

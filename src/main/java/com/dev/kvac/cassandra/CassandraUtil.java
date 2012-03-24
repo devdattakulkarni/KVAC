@@ -12,9 +12,12 @@ import org.apache.cassandra.thrift.AuthenticationException;
 import org.apache.cassandra.thrift.AuthenticationRequest;
 import org.apache.cassandra.thrift.AuthorizationException;
 import org.apache.cassandra.thrift.Cassandra;
+import org.apache.cassandra.thrift.CfDef;
 import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.CounterColumn;
 import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -120,7 +123,7 @@ public class CassandraUtil {
             server, port);
     }
 
-    public String executeGet(String columnFamily, String rowKey, String column)
+    public String get(String columnFamily, String rowKey, String column)
         throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
         // String t1 = "jsmith";
@@ -138,6 +141,7 @@ public class CassandraUtil {
                 .findByValue(1);
             retColumn = thriftClient.get(keyOfAccessor, accessorColPath,
                 consistency_level).column;
+
         } catch (NotFoundException e) {
             e.printStackTrace();
             return null;
@@ -147,6 +151,52 @@ public class CassandraUtil {
         String value = new String(columnValue);
         System.out.println("Got Value:" + value);
         return value;
+    }
+
+    public void add(String columnFamily, String rowKey, String column,
+        String value) throws Exception {
+        ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
+     
+        byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+        keyOfAccessor = ByteBuffer.wrap(t1array);
+
+        ColumnParent colParent = new ColumnParent();
+        colParent.setColumn_family(columnFamily);
+        Column col = new Column();
+        col.setName(column.getBytes());
+        col.setValue(value.getBytes());
+        col.setTimestamp(System.currentTimeMillis());
+
+        ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);
+        thriftClient.insert(keyOfAccessor, colParent, col, consistency_level);
+    }
+
+    public void delete(String columnFamily, String rowKey, String column)
+        throws Exception {
+        ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
+        // String t1 = "jsmith";
+        byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+        keyOfAccessor = ByteBuffer.wrap(t1array);
+
+        // 2.2 Create the ColumnPath
+        ColumnPath accessorColPath = new ColumnPath();
+        accessorColPath.setColumn_family(columnFamily);
+        accessorColPath.setColumn(column.getBytes());
+
+        ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);
+
+        thriftClient.remove(keyOfAccessor, accessorColPath, 0,
+            consistency_level);
+    }
+    
+    public void dropColumnFamily(String columnFamily) throws Exception {
+        thriftClient.system_drop_column_family(columnFamily);
+    }
+    
+    public void addColumnFamily(String keyspace, String columnFamily) throws Exception {
+        CfDef c = new CfDef(keyspace, columnFamily);
+        
+        thriftClient.system_add_column_family(c);
     }
 
 }
