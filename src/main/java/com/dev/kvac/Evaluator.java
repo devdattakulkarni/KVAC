@@ -145,10 +145,12 @@ public final class Evaluator {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column);
             }
             if (storeType.equalsIgnoreCase("cassandra")) {
-                columnValue = ((CassandraAccessor)kvstore).getCassandraUtil().get(columnFamily, rowKey, column);
+                columnValue = ((CassandraAccessor) kvstore).getCassandraUtil()
+                    .get(columnFamily, rowKey, column);
             }
             if (storeType.equalsIgnoreCase("mongodb")) {
-                columnValue = ((MongoDBAccessor)kvstore).getUtil().get(keyspace,columnFamily, rowKey, column);
+                columnValue = ((MongoDBAccessor) kvstore).getUtil().get(
+                    keyspace, columnFamily, rowKey, column);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -223,14 +225,10 @@ public final class Evaluator {
             return inputKey;
         } else if (keyVal.equals("key=user.name")) {
             String keyName = this.kvstore.getUser();
-            // ByteBuffer keyOfAccessor = getKey(keyName);
-            // return keyOfAccessor;
             return keyName;
         } else {
             keyVal = keyVal.substring(keyVal.indexOf("/"));
             String keyString = evaluate(inputKey, keyVal);
-            // ByteBuffer keyOfAccessor = getKey(keyString);
-            // return keyOfAccessor;
             return keyString;
         }
     }
@@ -240,37 +238,4 @@ public final class Evaluator {
         ByteBuffer keyOfAccessor = ByteBuffer.wrap(keyNameArray);
         return keyOfAccessor;
     }
-
-    /*
-     * private static String evaluate_poc(ByteBuffer key, AuthenticatedUser
-     * user, String expr, CassandraServer server) { String answer = null;
-     * 
-     * // 2.1 Create the key ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
-     * String t1 = "jsmith"; byte[] t1array =
-     * t1.getBytes(Charset.forName("ISO-8859-1")); keyOfAccessor =
-     * ByteBuffer.wrap(t1array);
-     * 
-     * String temp = KVACUtil.getStringRepresentation(keyOfAccessor);
-     * 
-     * // 2.2 Create the ColumnPath ColumnPath accessorColPath = new
-     * ColumnPath(); accessorColPath.setColumn_family("Doctor");
-     * accessorColPath.setColumn("curr_patients".getBytes());
-     * 
-     * // 2.3 Query the accessor's Column Family try { ConsistencyLevel
-     * consistency_level = ConsistencyLevel .findByValue(1);
-     * 
-     * ColumnOrSuperColumn accessorsSpecificColumn; try {
-     * accessorsSpecificColumn = server.get(keyOfAccessor, accessorColPath,
-     * consistency_level); String accessorColValue = KVACUtil
-     * .getStringRepresentation(accessorsSpecificColumn
-     * .getColumn().bufferForValue());
-     * 
-     * logger.info(" -- KVAC --- Accessor column value:" + accessorColValue);
-     * answer = accessorColValue; } catch (InvalidRequestException e) {
-     * e.printStackTrace(); } catch (UnavailableException e) {
-     * e.printStackTrace(); } catch (TimedOutException e) { e.printStackTrace();
-     * } } catch (NotFoundException e) { e.printStackTrace(); }
-     * 
-     * return answer; }
-     */
 }
