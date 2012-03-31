@@ -43,6 +43,7 @@ public class HBaseAccessorTest {
         columnFamily = "Patient";
         rowKey = "jack";
         columnKey = "name";
+        columnValue = "jack";
 
         hbase.put(keyspace, columnFamily, rowKey, columnKey, columnValue, t1
             .longValue());
@@ -101,24 +102,33 @@ public class HBaseAccessorTest {
 
         List<String> colFamilies = new ArrayList<String>();
         colFamilies.add(columnFamily);
+        colFamilies.add("Patient");
         setupTableAndColumnFamilies(keyspace, colFamilies);
 
         Long t1 = new Long(1);
         Long t2 = new Long(2);
+        hbase.put(keyspace, columnFamily, rowKey, columnKey, columnValue, t1
+            .longValue());
+
+        columnFamily = "Patient";
+        rowKey = "jack";
+        columnKey = "name";
+        columnValue = "jack";
 
         hbase.put(keyspace, columnFamily, rowKey, columnKey, columnValue, t1
             .longValue());
+
         hbase.put(keyspace, columnFamily, rowKey, columnKey, "jill", t2
             .longValue());
 
         String colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey,
             t1.longValue());
-        System.out.println(colValue);
-        Assert.assertEquals("jack", colValue);
+        System.out.println("Column Value:" + colValue);
+        Assert.assertEquals(columnValue, colValue);
 
         colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey, t2
             .longValue());
-        System.out.println(colValue);
+        System.out.println("Column Value:" + colValue);
         Assert.assertEquals("jill", colValue);
     }
 

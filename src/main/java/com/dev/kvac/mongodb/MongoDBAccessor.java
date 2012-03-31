@@ -16,8 +16,8 @@ public class MongoDBAccessor implements KVStoreInterface {
     Evaluator evaluator;
     MongoDBUtil mongoUtil;
 
-    public MongoDBAccessor(String host, int port, String user, String policyFilePath)
-        throws Exception {
+    public MongoDBAccessor(String host, int port, String user,
+        String policyFilePath) throws Exception {
         this.user = user;
         this.evaluator = new Evaluator(this, "mongodb");
         this.mongoUtil = new MongoDBUtil(host, port);
@@ -31,8 +31,8 @@ public class MongoDBAccessor implements KVStoreInterface {
         System.out.println("Resource:" + resource);
         Node whereNode = resourcePolicyMap.get(resource);
 
-      //boolean result = this.evaluator.evaluate(rowKey, whereNode);
-        boolean result = true;
+        String requestedPermission = "read";
+        boolean result = this.evaluator.evaluate(rowKey, whereNode, requestedPermission);
 
         String value = null;
         if (result) {
@@ -49,11 +49,11 @@ public class MongoDBAccessor implements KVStoreInterface {
         String columnKey, String value, long timestamp) throws Exception {
         mongoUtil.put(keyspace, columnFamily, rowKey, columnKey, value);
     }
-    
+
     public void clean(String keyspace) throws Exception {
         mongoUtil.clean(keyspace);
     }
-    
+
     public MongoDBUtil getUtil() {
         return mongoUtil;
     }

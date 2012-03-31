@@ -32,8 +32,8 @@ public class HBaseAccessor implements KVStoreInterface {
         System.out.println("Resource:" + resource);
         Node whereNode = resourcePolicyMap.get(resource);
 
-        //boolean result = this.evaluator.evaluate(rowKey, whereNode);
-        boolean result = true;
+        String requestedPermission = "read";
+        boolean result = this.evaluator.evaluate(rowKey, whereNode, requestedPermission);
         String value = null;
         if (result) {
             value = HBaseUtil.get(keyspace, rowKey, columnKey, timestamp);
@@ -44,7 +44,8 @@ public class HBaseAccessor implements KVStoreInterface {
     public void put(String keyspace, String columnFamily, String rowKey,
         String columnKey, String value, long timestamp) throws Exception {
 
-        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value, timestamp);
+        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value,
+            timestamp);
     }
 
     public void clean(String keyspace, String rowKey) throws Exception {

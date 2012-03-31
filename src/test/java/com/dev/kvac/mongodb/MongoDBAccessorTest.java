@@ -32,6 +32,7 @@ public class MongoDBAccessorTest {
         columnFamily = "Patient";
         rowKey = "jack";
         columnKey = "name";
+        columnValue = "jack";
         mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
         String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1);
