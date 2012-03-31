@@ -19,10 +19,20 @@ import com.dev.kvac.mongodb.MongoDBAccessor;
 
 public final class Evaluator {
 
+    private static final String MONGODB = "mongodb";
+    private static final String CASSANDRA = "cassandra";
+    private static final String HBASE = "hbase";
+    private static final String CURRENT_TIME = "CURRENT_TIME";
+    private static final String OP2 = "op2";
+    private static final String OP1 = "op1";
+    private static final String CONDITION = "condition";
+    private static final String VALUE = "value";
+    private static final String AND = "and";
+    private static final String EQUAL = "equal";
+    private static final String IN = "in";
+
     private static Logger logger = LoggerFactory.getLogger(Evaluator.class);
-
     private KVStoreInterface kvstore;
-
     private String storeType;
 
     public Evaluator(KVStoreInterface kvstore, String storeType) {
@@ -30,22 +40,44 @@ public final class Evaluator {
         this.storeType = storeType;
     }
 
-    public boolean evaluate(String key, Node whereNode) {
+    public boolean evaluate(String key, Node permissionNode,
+        String requestedPermission) {
         boolean result = false;
 
-        NodeList whereNodeChildren = whereNode.getChildNodes();
-        for (int k = 0; k < whereNodeChildren.getLength(); k++) {
-            Node n = whereNodeChildren.item(k);
-            if (n.getNodeName().equals("in")) {
+        NodeList permissionNodeChildren = permissionNode.getChildNodes();
+        Node permissionValueNode = null;
+        Node conditionNode = null;
+        for (int k = 0; k < permissionNodeChildren.getLength(); k++) {
+            Node n = permissionNodeChildren.item(k);
+
+            if (n.getNodeName().equals(VALUE)) {
+                permissionValueNode = n;
+            }
+            if (n.getNodeName().equals(CONDITION)) {
+                conditionNode = n;
+            }
+        }
+        
+        String specifiedPermission = permissionValueNode.getTextContent().trim();
+        if (!specifiedPermission.equalsIgnoreCase(requestedPermission)) {
+            return false;
+        }
+        
+        NodeList conditionNodeChildren = conditionNode.getChildNodes();
+        for (int k = 0; k < conditionNodeChildren.getLength(); k++) {
+            Node n = conditionNodeChildren.item(k);
+            
+            if (n.getNodeName().equals(IN)) {
                 result = evaluate_in(key, n);
             }
-            if (n.getNodeName().equals("equal")) {
+            if (n.getNodeName().equals(EQUAL)) {
                 result = evaluate_equal(key, n);
             }
-            if (n.getNodeName().equals("and")) {
+            if (n.getNodeName().equals(AND)) {
                 result = evaluate_and(key, n);
             }
         }
+        
         return result;
     }
 
@@ -54,8 +86,8 @@ public final class Evaluator {
 
         Node lhsNode, rhsNode;
 
-        lhsNode = KVACUtil.getChildNodeByName(inNode, "op1");
-        rhsNode = KVACUtil.getChildNodeByName(inNode, "op2");
+        lhsNode = KVACUtil.getChildNodeByName(inNode, OP1);
+        rhsNode = KVACUtil.getChildNodeByName(inNode, OP2);
 
         if (lhsNode != null && rhsNode != null) {
             String lhs = lhsNode.getTextContent().trim();
@@ -64,7 +96,7 @@ public final class Evaluator {
             String lhsResult = evaluate(key, lhs);
             String rhsResult = evaluate(key, rhs);
 
-            if (rhs.equals("CURRENT_TIME")) {
+            if (rhs.equals(CURRENT_TIME)) {
                 DateFormat dateFormat = new SimpleDateFormat(
                     "yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
@@ -84,8 +116,8 @@ public final class Evaluator {
 
         Node lhsNode, rhsNode;
 
-        lhsNode = KVACUtil.getChildNodeByName(andNode, "op1");
-        rhsNode = KVACUtil.getChildNodeByName(andNode, "op2");
+        lhsNode = KVACUtil.getChildNodeByName(andNode, OP1);
+        rhsNode = KVACUtil.getChildNodeByName(andNode, OP2);
 
         if (lhsNode != null && rhsNode != null) {
             String lhs = lhsNode.getTextContent().trim();
@@ -104,10 +136,10 @@ public final class Evaluator {
         NodeList children = andNode.getChildNodes();
         for (int k = 0; k < children.getLength(); k++) {
             Node n = children.item(k);
-            if (n.getNodeName().equals("in")) {
+            if (n.getNodeName().equals(IN)) {
                 result = result && evaluate_in(key, n);
             }
-            if (n.getNodeName().equals("equal")) {
+            if (n.getNodeName().equals(EQUAL)) {
                 result = result && evaluate_equal(key, n);
             }
         }
@@ -141,14 +173,14 @@ public final class Evaluator {
         String rowKey = parseRowKey(key, expr);
 
         try {
-            if (storeType.equalsIgnoreCase("hbase")) {
+            if (storeType.equalsIgnoreCase(HBASE)) {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
-            if (storeType.equalsIgnoreCase("cassandra")) {
+            if (storeType.equalsIgnoreCase(CASSANDRA)) {
                 columnValue = ((CassandraAccessor) kvstore).getCassandraUtil()
                     .get(columnFamily, rowKey, column);
             }
-            if (storeType.equalsIgnoreCase("mongodb")) {
+            if (storeType.equalsIgnoreCase(MONGODB)) {
                 columnValue = ((MongoDBAccessor) kvstore).getUtil().get(
                     keyspace, columnFamily, rowKey, column);
             }

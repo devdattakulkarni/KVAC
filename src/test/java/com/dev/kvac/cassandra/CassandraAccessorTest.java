@@ -86,6 +86,7 @@ public class CassandraAccessorTest {
         columnFamily = "Patient";
         rowKey = "jack";
         columnKey = "name";
+        columnValue = "jack";
 
         try {
             accessor.dropColumnFamily(columnFamily);
@@ -132,7 +133,7 @@ public class CassandraAccessorTest {
         columnFamily = "Patient";
         rowKey = "john";
         columnKey = "name";
-        columnValue = "jack";
+        columnValue = "real name is jack";
 
         try {
             accessor.dropColumnFamily(columnFamily);

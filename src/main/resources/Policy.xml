@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
-    <!-- <policy>
-    <resource>
-    /PatientInfoSystem/Patient/name
-    </resource>
-    <permission>
-    <value>
-    read
-    </value>
-    <condition>
-    <in>
-    <op1>
-    /PatientInfoSystem/Patient(key=thisKey)/name
-    </op1>
-    <op2>
-    /PatientInfoSystem/Doctor(key=user.name)/curr_patients
-    </op2>
-    </in>
-    </condition>
-    </permission>
-    </policy> -->
+    <policy name="/PatientInfoSystem/Patient/name::1">
+        <resource>
+            /PatientInfoSystem/Patient/name
+        </resource>
+        <permission>
+            <value>
+                read
+            </value>
+            <condition>
+                <in>
+                    <op1>
+                        /PatientInfoSystem/Patient(key=thisKey)/name
+                    </op1>
+                    <op2>
+                        /PatientInfoSystem/Doctor(key=user.name)/curr_patients
+                    </op2>
+                </in>
+            </condition>
+        </permission>
+    </policy>
     <policy>
         <access>
             /PatientInfoSystem/Patient/curr_medications

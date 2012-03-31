@@ -6,3 +6,6 @@ The evaluate interface can then be changed to
 evaluate(keyspace, columnFamily, rowKey, columnKey) instead of the current
 
 evaluate(rowKey, whereNode)
+
+March 31, 2012
+Current design does not support multiple permission nodes for one resource.

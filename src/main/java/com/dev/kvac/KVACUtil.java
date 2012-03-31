@@ -15,33 +15,39 @@ import org.xml.sax.SAXException;
 
 public class KVACUtil {
 
+    private static final String PERMISSION = "permission";
+    private static final String RESOURCE = "resource";
+    private static final String POLICY_NODE = "policy";
+
+    // Returns a Map of resourceName, Permission Node. 
+    // Currently this does not support multiple permission nodes for a given resource.
     public static Map<String, Node> readPolicyFile(String policyFilePath)
         throws Exception {
-        Map<String, Node> resourcePolicyMap = new LinkedHashMap<String, Node>();
+        Map<String, Node> resourceNamePermissionNodeMap = new LinkedHashMap<String, Node>();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document dom = db.parse(policyFilePath);
-            NodeList policyList = dom.getElementsByTagName("policy");
+            NodeList policyList = dom.getElementsByTagName(POLICY_NODE);
             String resource = null;
-            Node policy = null;
+            Node permissionNode = null;
             for (int i = 0; i < policyList.getLength(); i++) {
                 Node policyNode = policyList.item(i);
                 NodeList children = policyNode.getChildNodes();
                 for (int j = 0; j < children.getLength(); j++) {
                     Node child = children.item(j);
-                    if (child.getNodeName().equals("access")) {
+                    if (child.getNodeName().equals(RESOURCE)) {
                         resource = child.getTextContent();
                         resource = resource.replaceAll(" ", "").replaceAll(
                             "\n", "");
                     }
-                    if (child.getNodeName().equals("where")) {
-                        policy = child;
+                    if (child.getNodeName().equals(PERMISSION)) {
+                        permissionNode = child;
                     }
-                    if (resource != null && policy != null) {
-                        resourcePolicyMap.put(resource, policy);
+                    if (resource != null && permissionNode != null) {
+                        resourceNamePermissionNodeMap.put(resource, permissionNode);
                         resource = null;
-                        policy = null;
+                        permissionNode = null;
                     }
                 }
             }
@@ -54,7 +60,7 @@ public class KVACUtil {
             ioe.printStackTrace();
         }
 
-        return resourcePolicyMap;
+        return resourceNamePermissionNodeMap;
     }
 
     public static Node getChildNodeByName(Node node, String childName) {

@@ -40,11 +40,11 @@ public class CassandraAccessor implements KVStoreInterface {
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
 
         System.out.println("Resource:" + resource);
-        Node whereNode = resourcePolicyMap.get(resource);
+        Node permissionNode = resourcePolicyMap.get(resource);
 
-      //boolean result = this.evaluator.evaluate(rowKey, whereNode);
-        boolean result = true;
-
+        String requestedPermission = "read"; // "get" is "read"
+        boolean result = this.evaluator.evaluate(rowKey, permissionNode, requestedPermission);
+        
         String value = null;
         if (result) {
             value = cassandraUtil.get(columnFamily, rowKey, columnKey);
