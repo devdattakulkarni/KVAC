@@ -17,3 +17,9 @@ Running Instructions:
   - Go to directory where you have downloaded Cassandra
   - Execute ./bin/cassandra
   - Run tests from CassandraAccessorTest
+  
+
+Download Instructions
+
+1) Casssandra version  
+  

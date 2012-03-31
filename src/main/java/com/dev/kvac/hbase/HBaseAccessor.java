@@ -25,28 +25,28 @@ public class HBaseAccessor implements KVStoreInterface {
     }
 
     public String get(String keyspace, String columnFamily, String rowKey,
-        String columnKey) throws Exception {
+        String columnKey, long timestamp) throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
 
         System.out.println("Resource:" + resource);
         Node whereNode = resourcePolicyMap.get(resource);
 
-        boolean result = this.evaluator.evaluate(rowKey, whereNode);
-
+        //boolean result = this.evaluator.evaluate(rowKey, whereNode);
+        boolean result = true;
         String value = null;
         if (result) {
-            value = HBaseUtil.get(keyspace, rowKey, columnKey);
+            value = HBaseUtil.get(keyspace, rowKey, columnKey, timestamp);
         }
         return value;
     }
 
     public void put(String keyspace, String columnFamily, String rowKey,
-        String columnKey, String value) throws Exception {
-   
-        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value);        
+        String columnKey, String value, long timestamp) throws Exception {
+
+        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value, timestamp);
     }
-    
+
     public void clean(String keyspace, String rowKey) throws Exception {
         HBaseUtil.clean(keyspace, rowKey);
     }

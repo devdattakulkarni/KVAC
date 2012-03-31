@@ -142,7 +142,7 @@ public final class Evaluator {
 
         try {
             if (storeType.equalsIgnoreCase("hbase")) {
-                columnValue = HBaseUtil.get(keyspace, rowKey, column);
+                columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
             if (storeType.equalsIgnoreCase("cassandra")) {
                 columnValue = ((CassandraAccessor) kvstore).getCassandraUtil()

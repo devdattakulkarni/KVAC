@@ -154,7 +154,7 @@ public class CassandraUtil {
     }
 
     public void add(String columnFamily, String rowKey, String column,
-        String value) throws Exception {
+        String value, long timestamp) throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
      
         byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
@@ -165,10 +165,11 @@ public class CassandraUtil {
         Column col = new Column();
         col.setName(column.getBytes());
         col.setValue(value.getBytes());
-        col.setTimestamp(System.currentTimeMillis());
+        col.setTimestamp(timestamp);
 
         ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);
         thriftClient.insert(keyOfAccessor, colParent, col, consistency_level);
+        
     }
 
     public void delete(String columnFamily, String rowKey, String column)

@@ -27,14 +27,14 @@ public class MongoDBAccessorTest {
         String rowKey = "devdatta";
         String columnKey = "curr_patients";
         String columnValue = "jack";
-        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue);
+        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
         columnFamily = "Patient";
         rowKey = "jack";
         columnKey = "name";
-        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue);
+        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
-        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey);
+        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1);
         System.out.println("Column Value:" + colValue);
         Assert.assertEquals(columnValue, colValue);
     }
@@ -57,15 +57,15 @@ public class MongoDBAccessorTest {
         String rowKey = "devdatta";
         String columnKey = "curr_patients";
         String columnValue = "john";
-        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue);
+        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
         columnFamily = "Patient";
         rowKey = "jack";
         columnKey = "name";
         columnValue = "jack";
-        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue);
+        mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
-        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey);
+        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1);
         System.out.println("Column Value:" + colValue);
         Assert.assertNull(colValue);
     }
