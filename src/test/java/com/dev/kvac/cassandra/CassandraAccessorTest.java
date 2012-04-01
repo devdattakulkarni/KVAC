@@ -69,6 +69,43 @@ public class CassandraAccessorTest {
     }
 
     @Test
+    public void testGetAllColumnsForARow() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamily = "Doctor";
+        String rowKey = "devdatta";
+        String columnKey = "curr_patients";
+        String columnValue = "jack";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "strengths";
+        columnValue = "learner, responsibility, achiever, input";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "education";
+        columnValue = "PhD";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        String colValue = accessor.getCassandraUtil().getRow(columnFamily, rowKey);
+        System.out.println("Column Value:" + colValue);
+    }
+    
+    @Test
     public void testGetSuccessForARowKey() throws Exception {
         String user = "devdatta";
         String password = "devdatta";
@@ -91,7 +128,6 @@ public class CassandraAccessorTest {
             log.info(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
-        // accessor.delete(columnFamily, rowKey, columnKey);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         columnFamily = "Patient";
