@@ -15,7 +15,7 @@ public class MongoDBAccessorTest {
     @Test
     public void testGetSuccess() throws Exception {
         System.out.println("MongoDB Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         String host = "localhost";
         int port = 27017;
@@ -43,7 +43,7 @@ public class MongoDBAccessorTest {
     @Test
     public void testGetFailure() throws Exception {
         System.out.println("MongoDB Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         String host = "localhost";
         int port = 27017;

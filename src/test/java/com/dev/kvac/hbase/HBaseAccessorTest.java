@@ -21,7 +21,7 @@ public class HBaseAccessorTest {
     @Test
     public void testGetSuccess() throws Exception {
         System.out.println("HBase Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
 
@@ -57,7 +57,7 @@ public class HBaseAccessorTest {
     @Test
     public void testGetFailure() throws Exception {
         System.out.println("HBase Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
 
@@ -90,7 +90,7 @@ public class HBaseAccessorTest {
     @Test
     public void testMultipleValuesInAColumn() throws Exception {
         System.out.println("HBase Client");
-        String policyFilePath = "src/main/resources/Policy.xml";
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
 

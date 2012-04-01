@@ -57,16 +57,17 @@ public final class Evaluator {
                 conditionNode = n;
             }
         }
-        
-        String specifiedPermission = permissionValueNode.getTextContent().trim();
+
+        String specifiedPermission = permissionValueNode.getTextContent()
+            .trim();
         if (!specifiedPermission.equalsIgnoreCase(requestedPermission)) {
             return false;
         }
-        
+
         NodeList conditionNodeChildren = conditionNode.getChildNodes();
         for (int k = 0; k < conditionNodeChildren.getLength(); k++) {
             Node n = conditionNodeChildren.item(k);
-            
+
             if (n.getNodeName().equals(IN)) {
                 result = evaluate_in(key, n);
             }
@@ -77,7 +78,7 @@ public final class Evaluator {
                 result = evaluate_and(key, n);
             }
         }
-        
+
         return result;
     }
 
@@ -96,11 +97,16 @@ public final class Evaluator {
             String lhsResult = evaluate(key, lhs);
             String rhsResult = evaluate(key, rhs);
 
-            if (rhs.equals(CURRENT_TIME)) {
+            if (rhs.equals(CURRENT_TIME) || lhs.equals(CURRENT_TIME)) {
+
+                String specifiedWorkHours = rhs.equals(CURRENT_TIME) ? lhsResult
+                    : rhsResult;
+
                 DateFormat dateFormat = new SimpleDateFormat(
                     "yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
-                int i = compareDates(dateFormat.format(date), lhs);
+                int i = compareDates(dateFormat.format(date),
+                    specifiedWorkHours);
                 if (i == 1)
                     return true;
                 else
@@ -169,6 +175,11 @@ public final class Evaluator {
 
         String keyspace = parseKeySpace(expr);
         String columnFamily = parseColumnFamily(expr);
+
+        if (columnFamily == null) {
+            return columnValue;
+        }
+
         String column = parseColumn(expr);
         String rowKey = parseRowKey(key, expr);
 
