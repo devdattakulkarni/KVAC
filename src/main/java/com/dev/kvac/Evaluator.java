@@ -244,19 +244,7 @@ public final class Evaluator {
         
         int lastSlashIndex = expression.lastIndexOf("/");
         column = expression.substring(lastSlashIndex+1);
-        
-        /*StringTokenizer tokenizer = new StringTokenizer(expression, "/");
-        int count = 0;
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (count == 2) {
-                int index = token.indexOf("(");
-                column = token.substring(0, index > 0 ? index : token.length());
-                break;
-            } else {
-                count++;
-            }
-        }*/
+    
         return column;
     }
 
