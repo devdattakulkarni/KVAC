@@ -181,13 +181,14 @@ public final class Evaluator {
         }
 
         String column = parseColumn(expr);
-        String rowKey = parseRowKey(key, expr);
+        String rowKey = parseRowKey(key,expr);
 
         try {
             if (storeType.equalsIgnoreCase(HBASE)) {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
             if (storeType.equalsIgnoreCase(CASSANDRA)) {
+
                 columnValue = ((CassandraAccessor) kvstore).getCassandraUtil()
                     .get(columnFamily, rowKey, column);
             }

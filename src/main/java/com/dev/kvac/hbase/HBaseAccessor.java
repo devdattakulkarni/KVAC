@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 
 public class HBaseAccessor implements KVStoreInterface {
 
-    private Map<String, Node> resourcePolicyMap;
+    private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
 
@@ -30,10 +30,15 @@ public class HBaseAccessor implements KVStoreInterface {
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
 
         System.out.println("Resource:" + resource);
-        Node whereNode = resourcePolicyMap.get(resource);
+        Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
+            resourcePolicyMap, resource);
+
+        String resourceType = (String) resAndPermisison[0];
+        Node permissionNode = (Node) resAndPermisison[1];
 
         String requestedPermission = "read";
-        boolean result = this.evaluator.evaluate(rowKey, whereNode, requestedPermission);
+        boolean result = this.evaluator.evaluate(rowKey, permissionNode,
+            requestedPermission);
         String value = null;
         if (result) {
             value = HBaseUtil.get(keyspace, rowKey, columnKey, timestamp);

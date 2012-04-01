@@ -21,15 +21,15 @@ public class KVACUtil {
 
     // Returns a Map of resourceName, Permission Node. 
     // Currently this does not support multiple permission nodes for a given resource.
-    public static Map<String, Node> readPolicyFile(String policyFilePath)
+    public static Map<Node, Node> readPolicyFile(String policyFilePath)
         throws Exception {
-        Map<String, Node> resourceNamePermissionNodeMap = new LinkedHashMap<String, Node>();
+        Map<Node, Node> resourceNamePermissionNodeMap = new LinkedHashMap<Node, Node>();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document dom = db.parse(policyFilePath);
             NodeList policyList = dom.getElementsByTagName(POLICY_NODE);
-            String resource = null;
+            Node resource = null;
             Node permissionNode = null;
             for (int i = 0; i < policyList.getLength(); i++) {
                 Node policyNode = policyList.item(i);
@@ -37,9 +37,10 @@ public class KVACUtil {
                 for (int j = 0; j < children.getLength(); j++) {
                     Node child = children.item(j);
                     if (child.getNodeName().equals(RESOURCE)) {
-                        resource = child.getTextContent();
-                        resource = resource.replaceAll(" ", "").replaceAll(
-                            "\n", "");
+                        //resource = child.getTextContent();
+                        //resource = resource.replaceAll(" ", "").replaceAll(
+                        //    "\n", "");
+                        resource = child;
                     }
                     if (child.getNodeName().equals(PERMISSION)) {
                         permissionNode = child;
@@ -72,6 +73,25 @@ public class KVACUtil {
             }
         }
         return null;
+    }
+    
+    public static Object[] findPermissionNodeForResource(Map<Node,Node> resourcePolicyMap, String resource) {
+        Object[] resTypeAndPermission = new Object[2];
+
+        for (Node resourceNode : resourcePolicyMap.keySet()) {
+            String specifiedResource = resourceNode.getTextContent();
+            specifiedResource = specifiedResource.replaceAll(" ", "")
+                .replaceAll("\n", "");
+            if (specifiedResource.equalsIgnoreCase(resource)) {
+                Node permissionNode = resourcePolicyMap.get(resourceNode);
+                resTypeAndPermission[1] = permissionNode;
+
+                String resType = resourceNode.getAttributes().getNamedItem(
+                    "type").getNodeValue();
+                resTypeAndPermission[0] = resType;
+            }
+        }
+        return resTypeAndPermission;
     }
 
 }

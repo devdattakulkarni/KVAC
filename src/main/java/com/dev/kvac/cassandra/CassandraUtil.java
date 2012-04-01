@@ -198,7 +198,7 @@ public class CassandraUtil {
             }
         }
 
-        return colNameColValue.toString();
+        return colNameColValue.toString().trim();
     }
 
     public void add(String columnFamily, String rowKey, String column,

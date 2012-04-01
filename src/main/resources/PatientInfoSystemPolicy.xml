@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
     <policy name="/PatientInfoSystem/Patient/name::1">
-        <resource>
+        <resource type="row">     
             /PatientInfoSystem/Patient/name
         </resource>
         <permission>
@@ -21,7 +21,7 @@
         </permission>
     </policy>
     <policy>
-        <resource>
+        <resource type="column">
             /PatientInfoSystem/Patient/curr_medications
         </resource>
         <permission>
@@ -41,7 +41,7 @@
         </permission>
     </policy>
     <policy>
-        <resource>
+        <resource type="column">
             /PatientInfoSystem/Patient/medical_history
         </resource>
         <permission>

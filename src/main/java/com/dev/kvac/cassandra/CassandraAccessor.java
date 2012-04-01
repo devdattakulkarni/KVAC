@@ -10,7 +10,7 @@ import com.dev.kvac.KVStoreInterface;
 
 public class CassandraAccessor implements KVStoreInterface {
 
-    private Map<String, Node> resourcePolicyMap;
+    private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
     private CassandraUtil cassandraUtil;
@@ -26,7 +26,7 @@ public class CassandraAccessor implements KVStoreInterface {
         this.cassandraUtil.connect(server, port);
     }
 
-    public Map<String, Node> getResourcePolicyMap() {
+    public Map<Node, Node> getResourcePolicyMap() {
         return resourcePolicyMap;
     }
 
@@ -40,7 +40,12 @@ public class CassandraAccessor implements KVStoreInterface {
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
 
         System.out.println("Resource:" + resource);
-        Node permissionNode = resourcePolicyMap.get(resource);
+
+        Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
+            resourcePolicyMap, resource);
+
+        String resourceType = (String) resAndPermisison[0];
+        Node permissionNode = (Node) resAndPermisison[1];
 
         String requestedPermission = "read"; // "get" is "read"
         boolean result = this.evaluator.evaluate(rowKey, permissionNode,
@@ -48,7 +53,11 @@ public class CassandraAccessor implements KVStoreInterface {
 
         String value = null;
         if (result) {
-            value = cassandraUtil.get(columnFamily, rowKey, columnKey);
+            if (resourceType.equalsIgnoreCase("column")) {
+                value = cassandraUtil.get(columnFamily, rowKey, columnKey);
+            } else if (resourceType.equalsIgnoreCase("row")) {
+                value = cassandraUtil.getRow(columnFamily, rowKey);
+            }
         }
 
         return value;
