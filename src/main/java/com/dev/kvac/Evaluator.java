@@ -238,8 +238,14 @@ public final class Evaluator {
     protected static String parseColumn(String expression) {
         // input = /PatientInfoSystem/Patient(key=thisKey)/name
         // output = "name"
+        // input = /PatientInfoSystem/Doctor(key=/PatientInfoSystem/Patient(key=thisKey)/curr_doctor)/location
+        // output = "location"
         String column = null;
-        StringTokenizer tokenizer = new StringTokenizer(expression, "/");
+        
+        int lastSlashIndex = expression.lastIndexOf("/");
+        column = expression.substring(lastSlashIndex+1);
+        
+        /*StringTokenizer tokenizer = new StringTokenizer(expression, "/");
         int count = 0;
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
@@ -250,7 +256,7 @@ public final class Evaluator {
             } else {
                 count++;
             }
-        }
+        }*/
         return column;
     }
 

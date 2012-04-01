@@ -59,11 +59,10 @@
                 </in>
             </condition>
         </permission>
-    </policy>
-    
+    </policy>   
     <policy>
-        <resource>
-            /PatientInfoSystem/Patient/patient_rep
+        <resource type="column">
+            /PatientInfoSystem/Patient/patient_reports
         </resource>
         <permission>
             <value>

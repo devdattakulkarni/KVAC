@@ -111,6 +111,154 @@ public class CassandraAccessorTest {
     }
 
     @Test
+    public void testGetSuccessWithAndConditionForAColumnKey() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String nurseColFamily = "Nurse";
+        String nurseRowkey = "devdatta";
+        String nurseColkey = "location";
+        String nurseColVal = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(nurseColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, nurseColFamily);
+        accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
+            nurseColVal, 1);
+
+        String patientColFamily = "Patient";
+        String patientRowkey = "john";
+        String patientColkey = "location";
+        String patientColVal = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(patientColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, patientColFamily);
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "curr_doctor";
+        patientColVal = "pk";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "patient_reports";
+        patientColVal = "Has cold. No flu symptoms";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        String doctorColFamily = "Doctor";
+        String doctorRowkey = "pk";
+        String doctorColkey = "location";
+        String doctorColVal = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(doctorColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, doctorColFamily);
+        accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
+            doctorColVal, 1);
+
+        String queryColumnFamily = "Patient";
+        String queryRowKey = "john";
+        String queryColumnKey = "patient_reports";
+
+        String colValue = accessor.get(keyspace, queryColumnFamily,
+            queryRowKey, queryColumnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        Assert.assertEquals(patientColVal, colValue);
+    }
+
+    @Test
+    public void testGetFailureWithAndConditionForAColumnKey() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String nurseColFamily = "Nurse";
+        String nurseRowkey = "devdatta";
+        String nurseColkey = "location";
+        String nurseColVal = "ward-2";
+
+        try {
+            accessor.dropColumnFamily(nurseColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, nurseColFamily);
+        accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
+            nurseColVal, 1);
+
+        String patientColFamily = "Patient";
+        String patientRowkey = "john";
+        String patientColkey = "location";
+        String patientColVal = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(patientColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, patientColFamily);
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "curr_doctor";
+        patientColVal = "pk";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "patient_reports";
+        patientColVal = "Has cold. No flu symptoms";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        String doctorColFamily = "Doctor";
+        String doctorRowkey = "pk";
+        String doctorColkey = "location";
+        String doctorColVal = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(doctorColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, doctorColFamily);
+        accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
+            doctorColVal, 1);
+
+        String queryColumnFamily = "Patient";
+        String queryRowKey = "john";
+        String queryColumnKey = "patient_reports";
+
+        String colValue = accessor.get(keyspace, queryColumnFamily,
+            queryRowKey, queryColumnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        Assert.assertNull(colValue);
+    }
+        
+    @Test
     public void testGetSuccessWithEqualityConditionForARowKey()
         throws Exception {
         String user = "devdatta";
@@ -148,7 +296,7 @@ public class CassandraAccessorTest {
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
-        
+
         columnKey = "patient_info";
         columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -156,8 +304,8 @@ public class CassandraAccessorTest {
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1);
         System.out.println("Column Value:{" + colValue + "}");
-        StringTokenizer tokenizer = new StringTokenizer(colValue," ");
-        while(tokenizer.hasMoreElements()) {
+        StringTokenizer tokenizer = new StringTokenizer(colValue, " ");
+        while (tokenizer.hasMoreElements()) {
             String token = tokenizer.nextToken();
             if (token.indexOf("location") > 0) {
                 Assert.assertEquals("location:ward-2", colValue);
@@ -167,7 +315,7 @@ public class CassandraAccessorTest {
             }
         }
     }
-    
+
     @Test
     public void testGetFailureWithEqualityConditionForARowKey()
         throws Exception {
@@ -206,7 +354,7 @@ public class CassandraAccessorTest {
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
-        
+
         columnKey = "patient_info";
         columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -215,7 +363,7 @@ public class CassandraAccessorTest {
             columnKey, 1);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);
-    }    
+    }
 
     @Test
     public void testGetSuccessForARowKey() throws Exception {
