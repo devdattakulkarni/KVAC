@@ -30,7 +30,8 @@ public class CassandraAccessorTest {
     public void setup() {
     }
 
-    @Test // FIX THIS TEST
+    @Test
+    // FIX THIS TEST
     public void testCreationOfPermissionCF() throws Exception {
         String user = "devdatta";
         String password = "devdatta";
@@ -56,17 +57,17 @@ public class CassandraAccessorTest {
             Node conditionNode = resPolicyMap.get(key);
             String columnKey = "permission";
             String columnValue = conditionNode.toString();
-            // TODO -- FIX THIS 
-            //accessor
-            //    .put(keyspace, columnFamily, key, columnKey, columnValue, 1);
+            // TODO -- FIX THIS
+            // accessor
+            // .put(keyspace, columnFamily, key, columnKey, columnValue, 1);
         }
 
         for (Node key : resPolicyMap.keySet()) {
             String column = "permission";
             // TODO -- FIX THIS
-            //String value = accessor.getCassandraUtil().get(columnFamily, key,
-            //    column);
-           // System.out.println(value);
+            // String value = accessor.getCassandraUtil().get(columnFamily, key,
+            // column);
+            // System.out.println(value);
         }
     }
 
@@ -154,6 +155,104 @@ public class CassandraAccessorTest {
         Assert.assertEquals(columnKey + ":" + columnValue, colValue);
     }
 
+    @Test
+    public void testGetSuccessForAColumnKey() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamily = "Doctor";
+        String rowKey = "devdatta";
+        String columnKey = "curr_patients";
+        String columnValue = "jack";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        columnFamily = "Patient";
+        rowKey = "jack";
+        columnKey = "name";
+        columnValue = "jack";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "curr_medications";
+        columnValue = "Glycodin, Aspro, Tylenol";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+            columnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+
+        Assert.assertEquals(columnValue, colValue);
+    }
+
+    @Test
+    public void testGetFailureForAColumnKey() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamily = "Doctor";
+        String rowKey = "devdatta";
+        String columnKey = "curr_patients";
+        String columnValue = "john";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        columnFamily = "Patient";
+        rowKey = "jack";
+        columnKey = "name";
+        columnValue = "jack";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "curr_medications";
+        columnValue = "Glycodin, Aspro, Tylenol";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+            columnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+
+        Assert.assertNull(colValue);
+    }
+        
     @Test
     public void testGetFailureForARowKey() throws Exception {
         String user = "devdatta";
