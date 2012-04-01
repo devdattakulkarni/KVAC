@@ -149,7 +149,7 @@ public class CassandraUtil {
 
         byte[] columnValue = retColumn.getValue();
         String value = new String(columnValue);
-        System.out.println("Got Value:" + value);
+        //System.out.println("Got Value:" + value);
         return value;
     }
 

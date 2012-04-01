@@ -21,5 +21,8 @@ Running Instructions:
 
 Download Instructions
 
-1) Casssandra version  
+KVAC library has been designed and tested with 
+- Casssandra version  apache-cassandra-0.8.6
+- HBase version hbase-0.92.0
+- MongoDB version mongodb-osx-i386-2.0.1
   

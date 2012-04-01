@@ -25,7 +25,7 @@ public class CassandraAccessor implements KVStoreInterface {
         this.cassandraUtil = new CassandraUtil(user, password, keyspace);
         this.cassandraUtil.connect(server, port);
     }
-    
+
     public Map<String, Node> getResourcePolicyMap() {
         return resourcePolicyMap;
     }
@@ -43,14 +43,20 @@ public class CassandraAccessor implements KVStoreInterface {
         Node permissionNode = resourcePolicyMap.get(resource);
 
         String requestedPermission = "read"; // "get" is "read"
-        boolean result = this.evaluator.evaluate(rowKey, permissionNode, requestedPermission);
-        
+        boolean result = this.evaluator.evaluate(rowKey, permissionNode,
+            requestedPermission);
+
         String value = null;
         if (result) {
             value = cassandraUtil.get(columnFamily, rowKey, columnKey);
         }
 
         return value;
+    }
+
+    public String direct_get(String keyspace, String columnFamily,
+        String rowKey, String columnKey, long timestamp) throws Exception {
+        return cassandraUtil.get(columnFamily, rowKey, columnKey);
     }
 
     public void put(String keyspace, String columnFamily, String rowKey,

@@ -35,60 +35,59 @@
             </in>
         </where>
     </policy>
-    <!-- <policy>
-    <access>
-    /PatientInfoSystem/Patient/medical_history
-    </access>
-    <where>
-    <in>
-    <op1>
-    /PatientInfoSystem/Nurse(key=user.name)/work_hours
-    </op1>
-    <op2>
-    CURRENT_TIME
-    </op2>
-    </in>
-    </where>
+    <policy>
+        <access>
+            /PatientInfoSystem/Patient/medical_history
+        </access>
+        <where>
+            <in>
+                <op1>
+                    /PatientInfoSystem/Nurse(key=user.name)/work_hours
+                </op1>
+                <op2>
+                    CURRENT_TIME
+                </op2>
+            </in>
+        </where>
     </policy>
     <policy>
-    <access>
-    /PatientInfoSystem/Patient
-    </access>
-    <where>
-    <equal>
-    <op1>
-    /PatientInfoSystem/Patient(key=thisKey)/location
-    </op1>
-    <op2>
-    /PatientInfoSystem/Nurse(key=user.name)/location
-    </op2>
-    </equal>
-    </where>
+        <access>
+            /PatientInfoSystem/Patient
+        </access>
+        <where>
+            <equal>
+                <op1>
+                    /PatientInfoSystem/Patient(key=thisKey)/location
+                </op1>
+                <op2>
+                    /PatientInfoSystem/Nurse(key=user.name)/location
+                </op2>
+            </equal>
+        </where>
     </policy>
     <policy>
-    <access>
-    /PatientInfoSystem/Patient/patient_rep
-    </access>
-    <where>
-    <and>
-    <equal>
-    <op1>
-    /PatientInfoSystem/Patient(key=thisKey)/location
-    </op1>
-    <op2>
-    /PatientInfoSystem/Nurse(key=user.name)/location
-    </op2>
-    </equal>
-    <equal>
-    <op1>
-    /PatientInfoSystem/Nurse(key=user.name)/location
-    </op1>
-    <op2>
-    /PatientInfoSystem/Doctor(key=/PatientInfoSystem/Patient(key=thisKey)/curr_doctor)/location
-    </op2>
-    </equal>
-    </and>
-    </where>
+        <access>
+            /PatientInfoSystem/Patient/patient_rep
+        </access>
+        <where>
+            <and>
+                <equal>
+                    <op1>
+                        /PatientInfoSystem/Patient(key=thisKey)/location
+                    </op1>
+                    <op2>
+                        /PatientInfoSystem/Nurse(key=user.name)/location
+                    </op2>
+                </equal>
+                <equal>
+                    <op1>
+                        /PatientInfoSystem/Nurse(key=user.name)/location
+                    </op1>
+                    <op2>
+                        /PatientInfoSystem/Doctor(key=/PatientInfoSystem/Patient(key=thisKey)/curr_doctor)/location
+                    </op2>
+                </equal>
+            </and>
+        </where>
     </policy>
-    -->
 </policies>
