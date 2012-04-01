@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
     <policy name="/PatientInfoSystem/Patient/name::1">
-        <resource type="row">     
+        <resource type="row">
             /PatientInfoSystem/Patient/name
         </resource>
         <permission>
@@ -60,26 +60,7 @@
             </condition>
         </permission>
     </policy>
-    <policy>
-        <resource>
-            /PatientInfoSystem/Patient
-        </resource>
-        <permisison>
-            <value>
-                read
-            </value>
-            <condition>
-                <equal>
-                    <op1>
-                        /PatientInfoSystem/Patient(key=thisKey)/location
-                    </op1>
-                    <op2>
-                        /PatientInfoSystem/Nurse(key=user.name)/location
-                    </op2>
-                </equal>
-            </condition>
-        </permisison>
-    </policy>
+    
     <policy>
         <resource>
             /PatientInfoSystem/Patient/patient_rep
@@ -107,6 +88,26 @@
                         </op2>
                     </equal>
                 </and>
+            </condition>
+        </permission>
+    </policy>
+    <policy>
+        <resource type="row">
+            /PatientInfoSystem/Patient/patient_info
+        </resource>
+        <permission>
+            <value>
+                read
+            </value>
+            <condition>
+                <equal>
+                    <op1>
+                        /PatientInfoSystem/Patient(key=thisKey)/location
+                    </op1>
+                    <op2>
+                        /PatientInfoSystem/Nurse(key=user.name)/location
+                    </op2>
+                </equal>
             </condition>
         </permission>
     </policy>

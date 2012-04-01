@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 
@@ -110,6 +111,113 @@ public class CassandraAccessorTest {
     }
 
     @Test
+    public void testGetSuccessWithEqualityConditionForARowKey()
+        throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamily = "Nurse";
+        String rowKey = "devdatta";
+        String columnKey = "location";
+        String columnValue = "ward-2";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        columnFamily = "Patient";
+        rowKey = "jack";
+        columnKey = "location";
+        columnValue = "ward-2";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "patient_info";
+        columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+            columnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        StringTokenizer tokenizer = new StringTokenizer(colValue," ");
+        while(tokenizer.hasMoreElements()) {
+            String token = tokenizer.nextToken();
+            if (token.indexOf("location") > 0) {
+                Assert.assertEquals("location:ward-2", colValue);
+            }
+            if (token.indexOf("patient_data") > 0) {
+                Assert.assertEquals("patient_data:" + columnValue, colValue);
+            }
+        }
+    }
+    
+    @Test
+    public void testGetFailureWithEqualityConditionForARowKey()
+        throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9160;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamily = "Nurse";
+        String rowKey = "devdatta";
+        String columnKey = "location";
+        String columnValue = "ward-1";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        columnFamily = "Patient";
+        rowKey = "jack";
+        columnKey = "location";
+        columnValue = "ward-2";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "patient_info";
+        columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+
+        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+            columnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        Assert.assertNull(colValue);
+    }    
+
+    @Test
     public void testGetSuccessForARowKey() throws Exception {
         String user = "devdatta";
         String password = "devdatta";
@@ -192,7 +300,7 @@ public class CassandraAccessorTest {
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
-        
+
         columnKey = "curr_medications";
         columnValue = "Glycodin, Aspro, Tylenol";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -241,7 +349,7 @@ public class CassandraAccessorTest {
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
-        
+
         columnKey = "curr_medications";
         columnValue = "Glycodin, Aspro, Tylenol";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -252,7 +360,7 @@ public class CassandraAccessorTest {
 
         Assert.assertNull(colValue);
     }
-        
+
     @Test
     public void testGetFailureForARowKey() throws Exception {
         String user = "devdatta";

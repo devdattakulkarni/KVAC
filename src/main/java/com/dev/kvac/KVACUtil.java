@@ -37,9 +37,10 @@ public class KVACUtil {
                 for (int j = 0; j < children.getLength(); j++) {
                     Node child = children.item(j);
                     if (child.getNodeName().equals(RESOURCE)) {
-                        //resource = child.getTextContent();
-                        //resource = resource.replaceAll(" ", "").replaceAll(
-                        //    "\n", "");
+                        String res = child.getTextContent();
+                        res = res.replaceAll(" ", "").replaceAll(
+                            "\n", "");
+                        //System.out.println("(KVACUtil:readPolicyFile) Resource:" + res);
                         resource = child;
                     }
                     if (child.getNodeName().equals(PERMISSION)) {
