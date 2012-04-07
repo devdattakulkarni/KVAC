@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
-public class CassandraAccessorTest {
+public class PatientInfoSystemTest {
     CassandraAccessor cassandra;
     private final Logger log = LoggerFactory.getLogger(CassandraAccessor.class);
 
@@ -98,7 +98,7 @@ public class CassandraAccessorTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         columnKey = "strengths";
-        columnValue = "learner, responsibility, achiever, input";
+        columnValue = "intellection, responsibility, learner, achiever, input";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         columnKey = "education";

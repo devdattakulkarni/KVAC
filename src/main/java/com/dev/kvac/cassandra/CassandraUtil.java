@@ -20,9 +20,12 @@ import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.thrift.CounterColumn;
+import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.KeySlice;
+import org.apache.cassandra.thrift.KsDef;
 import org.apache.cassandra.thrift.NotFoundException;
+import org.apache.cassandra.thrift.SchemaDisagreementException;
 import org.apache.cassandra.thrift.SlicePredicate;
 import org.apache.cassandra.thrift.SliceRange;
 import org.apache.thrift.TException;
@@ -66,6 +69,8 @@ public class CassandraUtil {
         TBinaryProtocol binaryProtocol = new TBinaryProtocol(transport, true,
             true);
         Cassandra.Client cassandraClient = new Cassandra.Client(binaryProtocol);
+        
+      
 
         try {
             transport.open();
@@ -76,6 +81,32 @@ public class CassandraUtil {
                 .getCause().getMessage();
             throw new RuntimeException("Exception connecting to " + server
                 + "/" + port + ". Reason: " + error + ".");
+        }
+        
+        try {            
+            cassandraClient.describe_keyspace(sessionState.keyspace);           
+        } catch (InvalidRequestException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (TException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (NotFoundException e) {            
+            e.printStackTrace();
+            KsDef keyspaceDefinition = new KsDef();
+            keyspaceDefinition.setName(sessionState.keyspace);
+            try {
+                cassandraClient.system_add_keyspace(keyspaceDefinition);
+            } catch (InvalidRequestException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (SchemaDisagreementException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (TException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         }
 
         thriftClient = cassandraClient;
