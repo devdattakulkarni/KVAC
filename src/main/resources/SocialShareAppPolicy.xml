@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
-    <policy name="/PatientInfoSystem/Patient/name::1">
-        <resource type="column" id="policy1">
+	<policy name="/PatientInfoSystem/Patient/name::1">
+        <resource type="row" id="policy1" description="I can access all data for a person only if I am his/her family">
+            /SocialShare/Person/name
+        </resource>
+        <permission>
+            <value>
+                read
+            </value>
+            <condition>
+                <in>
+                    <op1>
+                        /SocialShare/Person(key=user.name)/name
+                    </op1>
+                    <op2>
+                        /SocialShare/Person(key=thisKey)/family
+                    </op2>
+                </in>
+            </condition>
+        </permission>
+    </policy>
+    <policy name="/PatientInfoSystem/Patient/name::2">
+        <resource type="column" id="policy2" description="I can access a person's plan only if I am his/her family">
             /SocialShare/Person/plans
         </resource>
         <permission>

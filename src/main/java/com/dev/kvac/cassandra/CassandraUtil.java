@@ -70,8 +70,6 @@ public class CassandraUtil {
             true);
         Cassandra.Client cassandraClient = new Cassandra.Client(binaryProtocol);
         
-      
-
         try {
             transport.open();
         } catch (Exception e) {
@@ -225,7 +223,7 @@ public class CassandraUtil {
                 ColumnOrSuperColumn c = cols.get(j);
                 colNameColValue.append(new String(c.getColumn().getName()));
                 colNameColValue.append(":"
-                    + new String(c.getColumn().getValue()) + "  ");
+                    + new String(c.getColumn().getValue()) + "|");
             }
         }
 

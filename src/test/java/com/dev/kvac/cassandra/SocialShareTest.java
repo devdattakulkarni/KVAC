@@ -1,5 +1,9 @@
 package com.dev.kvac.cassandra;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import junit.framework.Assert;
 
 import org.apache.cassandra.thrift.InvalidRequestException;
@@ -17,7 +21,76 @@ public class SocialShareTest {
     }
 
     @Test
-    public void testPolicy1Success() throws Exception {
+    public void testPolicy1_ARowAccessPolicy() throws Exception {
+        String keyspace = "SocialShare";
+        CassandraAccessor accessor = getCassandraAccessor(keyspace);
+        
+        String columnFamily = "Person";
+        String rowKey = "jr";
+        String columnKey = "name";
+        String columnValue = "jr";
+
+        try {
+            accessor.dropColumnFamily(columnFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.info(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamily);
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "family";
+        columnValue = "devdatta";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        columnKey = "plans";
+        String plans = "Visit China";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, plans, 1);
+        
+        rowKey = "devdatta";
+        columnKey = "name";
+        columnValue = "devdatta";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        String queryColumnFamily = "Person";
+        String queryRowKey = "jr";
+        String queryColumnKey = "name";
+
+        String colValue = accessor.get(keyspace, queryColumnFamily,
+            queryRowKey, queryColumnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        List<String> expectedList = new ArrayList<String>();
+        expectedList.add("name:jr");
+        expectedList.add("family:devdatta");
+        expectedList.add("plans:Visit China");
+        StringTokenizer st = new StringTokenizer(colValue, "|");
+        while(st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (expectedList.contains(token)) {
+                Assert.assertTrue(true);
+            }
+            else {
+                Assert.assertTrue(false);
+            }
+        }
+        
+        //Assert.assertEquals(plans, colValue);
+        
+        rowKey = "purandare";
+        columnKey = "family";
+        columnValue = "aai purandare";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        queryRowKey = "purandare";
+        queryColumnKey = "plans";
+        colValue = accessor.get(keyspace, queryColumnFamily,
+            queryRowKey, queryColumnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        Assert.assertNull(plans,colValue);
+        
+    }    
+    
+    @Test
+    public void testPolicy2_AColumnAccessPolicy() throws Exception {
         String keyspace = "SocialShare";
         CassandraAccessor accessor = getCassandraAccessor(keyspace);
         
@@ -56,9 +129,22 @@ public class SocialShareTest {
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertEquals(plans, colValue);
         
+        rowKey = "purandare";
+        columnKey = "family";
+        columnValue = "aai purandare";
+        accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
+        
+        queryRowKey = "purandare";
+        queryColumnKey = "plans";
+        colValue = accessor.get(keyspace, queryColumnFamily,
+            queryRowKey, queryColumnKey, 1);
+        System.out.println("Column Value:{" + colValue + "}");
+        Assert.assertNull(plans,colValue);
         
     }
-
+    
+    
+    
     private CassandraAccessor getCassandraAccessor(String keyspace)
         throws Exception {
         String user = "devdatta";
