@@ -15,6 +15,7 @@ public class MongoDBAccessor implements KVStoreInterface {
     String user;
     Evaluator evaluator;
     MongoDBUtil mongoUtil;
+    private Map<String,String> runtimeParams;
 
     public MongoDBAccessor(String host, int port, String user,
         String policyFilePath) throws Exception {
@@ -25,8 +26,10 @@ public class MongoDBAccessor implements KVStoreInterface {
     }
 
     public String get(String keyspace, String columnFamily, String rowKey,
-        String columnKey, long timestamp) throws Exception {
+        String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
+        
+        this.runtimeParams = runtimeParams;
 
         System.out.println("Resource:" + resource);
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
@@ -61,6 +64,10 @@ public class MongoDBAccessor implements KVStoreInterface {
 
     public MongoDBUtil getUtil() {
         return mongoUtil;
+    }
+
+    public String getRuntimeParameterValues(String key) throws Exception {
+        return runtimeParams.get(key);
     }
 
 }

@@ -35,7 +35,7 @@ public class MongoDBAccessorTest {
         columnValue = "jack";
         mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
-        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1);
+        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1, null);
         System.out.println("Column Value:" + colValue);
         Assert.assertEquals(columnValue, colValue);
     }
@@ -66,7 +66,7 @@ public class MongoDBAccessorTest {
         columnValue = "jack";
         mongodb.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
         
-        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1);
+        String colValue = mongodb.get(keyspace, columnFamily, rowKey, columnKey, 1, null);
         System.out.println("Column Value:" + colValue);
         Assert.assertNull(colValue);
     }

@@ -13,6 +13,7 @@ public class HBaseAccessor implements KVStoreInterface {
     private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
+    private Map<String, String> runtimeParams;
 
     public HBaseAccessor(String policyFilePath, String user) throws Exception {
         resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
@@ -25,9 +26,11 @@ public class HBaseAccessor implements KVStoreInterface {
     }
 
     public String get(String keyspace, String columnFamily, String rowKey,
-        String columnKey, long timestamp) throws Exception {
+        String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
+        
+        this.runtimeParams = runtimeParams;
 
         System.out.println("Resource:" + resource);
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
@@ -55,5 +58,9 @@ public class HBaseAccessor implements KVStoreInterface {
 
     public void clean(String keyspace, String rowKey) throws Exception {
         HBaseUtil.clean(keyspace, rowKey);
+    }
+
+    public String getRuntimeParameterValues(String key) throws Exception {
+        return runtimeParams.get(key);
     }
 }

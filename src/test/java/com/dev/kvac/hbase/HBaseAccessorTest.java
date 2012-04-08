@@ -49,7 +49,7 @@ public class HBaseAccessorTest {
             .longValue());
 
         String colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey,
-            t1.longValue());
+            t1.longValue(), null);
         System.out.println("Column Value:" + colValue);
         Assert.assertEquals(columnValue, colValue);
     }
@@ -82,7 +82,7 @@ public class HBaseAccessorTest {
         hbase.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey,
-            1);
+            1, null);
         System.out.println("Column Value:" + colValue);
         Assert.assertNull(colValue);
     }
@@ -122,12 +122,12 @@ public class HBaseAccessorTest {
             .longValue());
 
         String colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey,
-            t1.longValue());
+            t1.longValue(), null);
         System.out.println("Column Value:" + colValue);
         Assert.assertEquals(columnValue, colValue);
 
         colValue = hbase.get(keyspace, columnFamily, rowKey, columnKey, t2
-            .longValue());
+            .longValue(), null);
         System.out.println("Column Value:" + colValue);
         Assert.assertEquals("jill", colValue);
     }

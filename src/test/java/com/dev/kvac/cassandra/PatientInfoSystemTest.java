@@ -179,7 +179,7 @@ public class PatientInfoSystemTest {
         String queryColumnKey = "patient_reports";
 
         String colValue = accessor.get(keyspace, queryColumnFamily,
-            queryRowKey, queryColumnKey, 1);
+            queryRowKey, queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertEquals(patientColVal, colValue);
     }
@@ -253,7 +253,7 @@ public class PatientInfoSystemTest {
         String queryColumnKey = "patient_reports";
 
         String colValue = accessor.get(keyspace, queryColumnFamily,
-            queryRowKey, queryColumnKey, 1);
+            queryRowKey, queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);
     }
@@ -302,7 +302,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         StringTokenizer tokenizer = new StringTokenizer(colValue, " ");
         while (tokenizer.hasMoreElements()) {
@@ -360,7 +360,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);
     }
@@ -405,7 +405,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
         Assert.assertEquals(columnKey + ":" + columnValue, colValue);
@@ -454,7 +454,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
         Assert.assertEquals(columnValue, colValue);
@@ -503,7 +503,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
         Assert.assertNull(colValue);
@@ -550,7 +550,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, 1);
+            columnKey, 1, null);
         System.out.println("Column Value:" + colValue);
 
         Assert.assertNull(colValue);
@@ -608,7 +608,7 @@ public class PatientInfoSystemTest {
             columnValueNurse, 1);
 
         String colValue = accessor.get(keyspace, columnFamilyPatient,
-            rowKeyPatient, columnKeyPatient, 1);
+            rowKeyPatient, columnKeyPatient, 1, null);
         System.out.println("Column Value:" + colValue);
 
         Assert.assertEquals(columnValuePatient, colValue);
@@ -667,7 +667,7 @@ public class PatientInfoSystemTest {
             columnValueNurse, 1);
 
         String colValue = accessor.get(keyspace, columnFamilyPatient,
-            rowKeyPatient, columnKeyPatient, 1);
+            rowKeyPatient, columnKeyPatient, 1, null);
         System.out.println("Column Value:" + colValue);
 
         Assert.assertNull(colValue);

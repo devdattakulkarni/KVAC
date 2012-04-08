@@ -1,5 +1,6 @@
 package com.dev.kvac.cassandra;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.w3c.dom.Node;
@@ -14,6 +15,7 @@ public class CassandraAccessor implements KVStoreInterface {
     private String user;
     private Evaluator evaluator;
     private CassandraUtil cassandraUtil;
+    private Map<String, String> runtimeParams;
 
     public CassandraAccessor(String policyFilePath, String user,
         String password, String keyspace, String server, int port)
@@ -21,6 +23,7 @@ public class CassandraAccessor implements KVStoreInterface {
         this.user = user;
         this.resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
         this.evaluator = new Evaluator(this, "cassandra");
+        this.runtimeParams = new HashMap<String, String>();
 
         this.cassandraUtil = new CassandraUtil(user, password, keyspace);
         this.cassandraUtil.connect(server, port);
@@ -35,9 +38,11 @@ public class CassandraAccessor implements KVStoreInterface {
     }
 
     public String get(String keyspace, String columnFamily, String rowKey,
-        String columnKey, long timestamp) throws Exception {
+        String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
+        
+        this.runtimeParams = runtimeParams;
 
         System.out.println("Resource:" + resource);
 
@@ -109,8 +114,13 @@ public class CassandraAccessor implements KVStoreInterface {
         String columnKey = "name";
 
         String colValue = accessor.get(keyspace, columnFamily, rowKey,
-            columnKey, System.currentTimeMillis());
+            columnKey, System.currentTimeMillis(), null);
         System.out.println("Column Value:" + colValue);
+    }
+
+    public String getRuntimeParameterValues(String key) throws Exception {
+        String val = runtimeParams.get(key);
+        return val;
     }
 
 }

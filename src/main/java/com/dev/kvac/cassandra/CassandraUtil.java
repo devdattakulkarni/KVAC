@@ -69,7 +69,7 @@ public class CassandraUtil {
         TBinaryProtocol binaryProtocol = new TBinaryProtocol(transport, true,
             true);
         Cassandra.Client cassandraClient = new Cassandra.Client(binaryProtocol);
-        
+
         try {
             transport.open();
         } catch (Exception e) {
@@ -80,16 +80,16 @@ public class CassandraUtil {
             throw new RuntimeException("Exception connecting to " + server
                 + "/" + port + ". Reason: " + error + ".");
         }
-        
-        try {            
-            cassandraClient.describe_keyspace(sessionState.keyspace);           
+
+        try {
+            cassandraClient.describe_keyspace(sessionState.keyspace);
         } catch (InvalidRequestException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         } catch (TException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
-        } catch (NotFoundException e) {            
+        } catch (NotFoundException e) {
             e.printStackTrace();
             KsDef keyspaceDefinition = new KsDef();
             keyspaceDefinition.setName(sessionState.keyspace);
@@ -227,7 +227,8 @@ public class CassandraUtil {
             }
         }
 
-        return colNameColValue.toString().trim();
+        return colNameColValue.toString().substring(0,
+            colNameColValue.lastIndexOf("|"));
     }
 
     public void add(String columnFamily, String rowKey, String column,
