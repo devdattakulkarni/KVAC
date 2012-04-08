@@ -25,7 +25,7 @@ public class HBaseAccessor implements KVStoreInterface {
         return user;
     }
 
-    public String get(String keyspace, String columnFamily, String rowKey,
+    public Object get(String keyspace, String columnFamily, String rowKey,
         String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
@@ -50,9 +50,9 @@ public class HBaseAccessor implements KVStoreInterface {
     }
 
     public void put(String keyspace, String columnFamily, String rowKey,
-        String columnKey, String value, long timestamp) throws Exception {
+        String columnKey, Object value, long timestamp) throws Exception {
 
-        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, value,
+        HBaseUtil.put(keyspace, columnFamily, rowKey, columnKey, (String)value,
             timestamp);
     }
 

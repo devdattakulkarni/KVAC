@@ -25,7 +25,7 @@ public class MongoDBAccessor implements KVStoreInterface {
         resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
     }
 
-    public String get(String keyspace, String columnFamily, String rowKey,
+    public Object get(String keyspace, String columnFamily, String rowKey,
         String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
         
@@ -54,8 +54,8 @@ public class MongoDBAccessor implements KVStoreInterface {
     }
 
     public void put(String keyspace, String columnFamily, String rowKey,
-        String columnKey, String value, long timestamp) throws Exception {
-        mongoUtil.put(keyspace, columnFamily, rowKey, columnKey, value);
+        String columnKey, Object value, long timestamp) throws Exception {
+        mongoUtil.put(keyspace, columnFamily, rowKey, columnKey, (String)value);
     }
 
     public void clean(String keyspace) throws Exception {

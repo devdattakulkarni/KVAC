@@ -1,5 +1,9 @@
 package com.dev.kvac;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -334,8 +338,13 @@ public final class Evaluator {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
             if (storeType.equalsIgnoreCase(CASSANDRA)) {
-                columnValue = ((CassandraAccessor) kvstore).getCassandraUtil()
+                byte [] val = (byte[])((CassandraAccessor) kvstore).getCassandraUtil()
                     .get(columnFamily, rowKey, column);
+                
+                BufferedInputStream buffer = new BufferedInputStream( new ByteArrayInputStream(val) );
+                ObjectInput input = new ObjectInputStream ( buffer );
+                
+                columnValue = (String)input.readObject();
 
                 if (parameterizedColValue != null) {
                     String actualColValue = kvstore

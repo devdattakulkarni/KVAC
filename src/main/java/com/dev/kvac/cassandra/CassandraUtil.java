@@ -1,5 +1,11 @@
 package com.dev.kvac.cassandra;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -158,7 +164,7 @@ public class CassandraUtil {
             server, port);
     }
 
-    public String get(String columnFamily, String rowKey, String column)
+    public Object get(String columnFamily, String rowKey, String column)
         throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
         // String t1 = "jsmith";
@@ -183,9 +189,10 @@ public class CassandraUtil {
         }
 
         byte[] columnValue = retColumn.getValue();
-        String value = new String(columnValue);
+
+        // String value = new String(columnValue);
         // System.out.println("Got Value:" + value);
-        return value;
+        return columnValue;
     }
 
     public String getRow(String columnFamily, String rowKey) throws Exception {
@@ -222,8 +229,12 @@ public class CassandraUtil {
             for (int j = 0; j < cols.size(); j++) {
                 ColumnOrSuperColumn c = cols.get(j);
                 colNameColValue.append(new String(c.getColumn().getName()));
-                colNameColValue.append(":"
-                    + new String(c.getColumn().getValue()) + "|");
+                byte[] val = (byte[]) c.getColumn().getValue();
+                BufferedInputStream buffer = new BufferedInputStream(
+                    new ByteArrayInputStream(val));
+                ObjectInput input = new ObjectInputStream(buffer);
+                String value = (String) input.readObject();
+                colNameColValue.append(":" + value + "|");
             }
         }
 
@@ -232,7 +243,7 @@ public class CassandraUtil {
     }
 
     public void add(String columnFamily, String rowKey, String column,
-        String value, long timestamp) throws Exception {
+        Object value, long timestamp) throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
 
         byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
@@ -242,7 +253,18 @@ public class CassandraUtil {
         colParent.setColumn_family(columnFamily);
         Column col = new Column();
         col.setName(column.getBytes());
-        col.setValue(value.getBytes());
+
+        // Serialize to a byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(value);
+        out.close();
+
+        // Get the bytes of the serialized object
+        byte[] buf = bos.toByteArray();
+
+        // col.setValue(((String) value).getBytes());
+        col.setValue(buf);
         col.setTimestamp(timestamp);
 
         ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);

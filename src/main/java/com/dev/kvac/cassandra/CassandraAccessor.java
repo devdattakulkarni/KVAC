@@ -1,5 +1,9 @@
 package com.dev.kvac.cassandra;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,11 +41,12 @@ public class CassandraAccessor implements KVStoreInterface {
         return cassandraUtil;
     }
 
-    public String get(String keyspace, String columnFamily, String rowKey,
-        String columnKey, long timestamp, Map<String,String> runtimeParams) throws Exception {
+    public Object get(String keyspace, String columnFamily, String rowKey,
+        String columnKey, long timestamp, Map<String, String> runtimeParams)
+        throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
-        
+
         this.runtimeParams = runtimeParams;
 
         System.out.println("Resource:" + resource);
@@ -58,23 +63,28 @@ public class CassandraAccessor implements KVStoreInterface {
 
         String value = null;
         if (result) {
+            byte[] val;
             if (resourceType.equalsIgnoreCase("column")) {
-                value = cassandraUtil.get(columnFamily, rowKey, columnKey);
+                val = (byte[]) cassandraUtil.get(columnFamily, rowKey,
+                    columnKey);
+                BufferedInputStream buffer = new BufferedInputStream(
+                    new ByteArrayInputStream(val));
+                ObjectInput input = new ObjectInputStream(buffer);
+                value = (String) input.readObject();
             } else if (resourceType.equalsIgnoreCase("row")) {
                 value = cassandraUtil.getRow(columnFamily, rowKey);
-            }
+            }           
         }
-
         return value;
     }
 
     public String direct_get(String keyspace, String columnFamily,
         String rowKey, String columnKey, long timestamp) throws Exception {
-        return cassandraUtil.get(columnFamily, rowKey, columnKey);
+        return (String) cassandraUtil.get(columnFamily, rowKey, columnKey);
     }
 
     public void put(String keyspace, String columnFamily, String rowKey,
-        String columnKey, String value, long timestamp) throws Exception {
+        String columnKey, Object value, long timestamp) throws Exception {
         cassandraUtil.add(columnFamily, rowKey, columnKey, value, timestamp);
     }
 
@@ -113,7 +123,7 @@ public class CassandraAccessor implements KVStoreInterface {
         String rowKey = "john";
         String columnKey = "name";
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, System.currentTimeMillis(), null);
         System.out.println("Column Value:" + colValue);
     }

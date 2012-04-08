@@ -62,7 +62,7 @@ public class SocialShareTest {
         String queryRowKey = "jr";
         String queryColumnKey = "name";
 
-        String colValue = accessor.get(keyspace, queryColumnFamily,
+        String colValue = (String)accessor.get(keyspace, queryColumnFamily,
             queryRowKey, queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         List<String> expectedList = new ArrayList<String>();
@@ -86,7 +86,7 @@ public class SocialShareTest {
 
         queryRowKey = "purandare";
         queryColumnKey = "plans";
-        colValue = accessor.get(keyspace, queryColumnFamily, queryRowKey,
+        colValue = (String)accessor.get(keyspace, queryColumnFamily, queryRowKey,
             queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(plans, colValue);
@@ -127,7 +127,7 @@ public class SocialShareTest {
         String queryRowKey = "jr";
         String queryColumnKey = "plans";
 
-        String colValue = accessor.get(keyspace, queryColumnFamily,
+        String colValue = (String)accessor.get(keyspace, queryColumnFamily,
             queryRowKey, queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertEquals(plans, colValue);
@@ -139,7 +139,7 @@ public class SocialShareTest {
 
         queryRowKey = "purandare";
         queryColumnKey = "plans";
-        colValue = accessor.get(keyspace, queryColumnFamily, queryRowKey,
+        colValue = (String)accessor.get(keyspace, queryColumnFamily, queryRowKey,
             queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(plans, colValue);
@@ -215,14 +215,14 @@ public class SocialShareTest {
 
         Map<String, String> runtimeParams = new HashMap<String, String>();
         runtimeParams.put("$c", "1");
-        String colValue = accessor.get(keyspace, queryColumnFamily,
+        String colValue = (String)accessor.get(keyspace, queryColumnFamily,
             queryRowKey, queryColumnKey, 1, runtimeParams);
         System.out.println("Column Value:{" + colValue + "}");
 
         Assert.assertTrue(colValue.contains("1"));
 
         runtimeParams.put("$c", "3");
-        colValue = accessor.get(keyspace, queryColumnFamily, queryRowKey,
+        colValue = (String)accessor.get(keyspace, queryColumnFamily, queryRowKey,
             queryColumnKey, 1, runtimeParams);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);

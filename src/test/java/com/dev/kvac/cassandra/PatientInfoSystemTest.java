@@ -1,16 +1,22 @@
 package com.dev.kvac.cassandra;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.Assert;
 
@@ -21,6 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class PatientInfoSystemTest {
@@ -32,7 +39,6 @@ public class PatientInfoSystemTest {
     }
 
     @Test
-    // FIX THIS TEST
     public void testCreationOfPermissionCF() throws Exception {
         String user = "devdatta";
         String password = "devdatta";
@@ -54,21 +60,30 @@ public class PatientInfoSystemTest {
 
         Map<Node, Node> resPolicyMap = accessor.getResourcePolicyMap();
 
-        for (Node key : resPolicyMap.keySet()) {
-            Node conditionNode = resPolicyMap.get(key);
+        for (Node node : resPolicyMap.keySet()) {
+            String specifiedResource = node.getTextContent();
+            specifiedResource = specifiedResource.replaceAll(" ", "")
+                .replaceAll("\n", "");
+            Node conditionNode = resPolicyMap.get(node);
             String columnKey = "permission";
-            String columnValue = conditionNode.toString();
-            // TODO -- FIX THIS
-            // accessor
-            // .put(keyspace, columnFamily, key, columnKey, columnValue, 1);
+            accessor.put(keyspace, columnFamily, specifiedResource, columnKey,
+                conditionNode, 1);
         }
 
-        for (Node key : resPolicyMap.keySet()) {
+        for (Node node : resPolicyMap.keySet()) {
+            String specifiedResource = node.getTextContent();
+            specifiedResource = specifiedResource.replaceAll(" ", "")
+                .replaceAll("\n", "");
             String column = "permission";
-            // TODO -- FIX THIS
-            // String value = accessor.getCassandraUtil().get(columnFamily, key,
-            // column);
-            // System.out.println(value);
+            byte[] value = (byte[]) accessor.getCassandraUtil().get(
+                columnFamily, specifiedResource, column);
+
+            BufferedInputStream buffer = new BufferedInputStream(
+                new ByteArrayInputStream(value));
+            ObjectInput input = new ObjectInputStream(buffer);
+
+            Node doc = (Node) input.readObject();
+            System.out.println(doc.getNodeName());
         }
     }
 
@@ -178,10 +193,18 @@ public class PatientInfoSystemTest {
         String queryRowKey = "john";
         String queryColumnKey = "patient_reports";
 
-        String colValue = accessor.get(keyspace, queryColumnFamily,
+        String colValue = (String) accessor.get(keyspace, queryColumnFamily,
             queryRowKey, queryColumnKey, 1, null);
+
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertEquals(patientColVal, colValue);
+    }
+
+    private Object getValue(byte[] val) throws Exception {
+        BufferedInputStream buffer = new BufferedInputStream(
+            new ByteArrayInputStream(val));
+        ObjectInput input = new ObjectInputStream(buffer);
+        return input.readObject();
     }
 
     @Test
@@ -252,12 +275,12 @@ public class PatientInfoSystemTest {
         String queryRowKey = "john";
         String queryColumnKey = "patient_reports";
 
-        String colValue = accessor.get(keyspace, queryColumnFamily,
+        String colValue = (String) accessor.get(keyspace, queryColumnFamily,
             queryRowKey, queryColumnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);
     }
-        
+
     @Test
     public void testGetSuccessWithEqualityConditionForARowKey()
         throws Exception {
@@ -301,7 +324,7 @@ public class PatientInfoSystemTest {
         columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         StringTokenizer tokenizer = new StringTokenizer(colValue, " ");
@@ -359,7 +382,7 @@ public class PatientInfoSystemTest {
         columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
         Assert.assertNull(colValue);
@@ -404,7 +427,7 @@ public class PatientInfoSystemTest {
         // accessor.delete(columnFamily, rowKey, columnKey);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
@@ -453,7 +476,7 @@ public class PatientInfoSystemTest {
         columnValue = "Glycodin, Aspro, Tylenol";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
@@ -502,7 +525,7 @@ public class PatientInfoSystemTest {
         columnValue = "Glycodin, Aspro, Tylenol";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:{" + colValue + "}");
 
@@ -549,7 +572,7 @@ public class PatientInfoSystemTest {
 
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        String colValue = accessor.get(keyspace, columnFamily, rowKey,
+        String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, 1, null);
         System.out.println("Column Value:" + colValue);
 
@@ -607,7 +630,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamilyNurse, rowKeyNurse, columnKeyNurse,
             columnValueNurse, 1);
 
-        String colValue = accessor.get(keyspace, columnFamilyPatient,
+        String colValue = (String) accessor.get(keyspace, columnFamilyPatient,
             rowKeyPatient, columnKeyPatient, 1, null);
         System.out.println("Column Value:" + colValue);
 
@@ -666,7 +689,7 @@ public class PatientInfoSystemTest {
         accessor.put(keyspace, columnFamilyNurse, rowKeyNurse, columnKeyNurse,
             columnValueNurse, 1);
 
-        String colValue = accessor.get(keyspace, columnFamilyPatient,
+        String colValue = (String) accessor.get(keyspace, columnFamilyPatient,
             rowKeyPatient, columnKeyPatient, 1, null);
         System.out.println("Column Value:" + colValue);
 
