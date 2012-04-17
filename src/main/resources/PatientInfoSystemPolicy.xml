@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
     <policy name="/PatientInfoSystem/Patient/name::1">
-        <resource type="row">
+        <resource type="row" description="Only a patient's doctor can access information about that patient.">
             /PatientInfoSystem/Patient/name
         </resource>
         <permission>
@@ -21,7 +21,7 @@
         </permission>
     </policy>
     <policy>
-        <resource type="column">
+        <resource type="column" description="Only a patient's doctor can access current_medications about that patient.">
             /PatientInfoSystem/Patient/curr_medications
         </resource>
         <permission>
@@ -41,7 +41,7 @@
         </permission>
     </policy>
     <policy>
-        <resource type="column">
+        <resource type="column" description="A nurse can access a patient's medical_history only during work hours.">
             /PatientInfoSystem/Patient/medical_history
         </resource>
         <permission>
@@ -61,7 +61,7 @@
         </permission>
     </policy>   
     <policy>
-        <resource type="column">
+        <resource type="column" description="A nurse can access a patient's reports only when the nurse and a doctor are present in patient's room">
             /PatientInfoSystem/Patient/patient_reports
         </resource>
         <permission>
@@ -91,7 +91,7 @@
         </permission>
     </policy>
     <policy>
-        <resource type="row">
+        <resource type="row" description="A nurse patient information of only those patients corresponding to the ward in which the nurse is present">
             /PatientInfoSystem/Patient/patient_info
         </resource>
         <permission>

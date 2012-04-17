@@ -26,25 +26,25 @@ import com.dev.kvac.cassandra.CassandraAccessor;
 import com.dev.kvac.hbase.HBaseUtil;
 import com.dev.kvac.mongodb.MongoDBAccessor;
 
-public final class Evaluator {
+public abstract class Evaluator {
 
-    private static final String YYYY_MM_DD = "yyyy/MM/dd";
-    private static final String MONGODB = "mongodb";
-    private static final String CASSANDRA = "cassandra";
-    private static final String HBASE = "hbase";
-    private static final String CURRENT_TIME = "CURRENT_TIME";
-    private static final String OP2 = "op2";
-    private static final String OP1 = "op1";
-    private static final String CONDITION = "condition";
-    private static final String VALUE = "value";
-    private static final String AND = "and";
-    private static final String EQUAL = "equal";
-    private static final String IN = "in";
-    private static final String MINUS = "minus";
+    protected static final String YYYY_MM_DD = "yyyy/MM/dd";
+    protected static final String MONGODB = "mongodb";
+    protected static final String CASSANDRA = "cassandra";
+    protected static final String HBASE = "hbase";
+    protected static final String CURRENT_TIME = "CURRENT_TIME";
+    protected static final String OP2 = "op2";
+    protected static final String OP1 = "op1";
+    protected static final String CONDITION = "condition";
+    protected static final String VALUE = "value";
+    protected static final String AND = "and";
+    protected static final String EQUAL = "equal";
+    protected static final String IN = "in";
+    protected static final String MINUS = "minus";
 
     private static Logger logger = LoggerFactory.getLogger(Evaluator.class);
-    private KVStoreInterface kvstore;
-    private String storeType;
+    protected KVStoreInterface kvstore;
+    protected String storeType;
 
     public Evaluator(KVStoreInterface kvstore, String storeType) {
         this.kvstore = kvstore;
@@ -281,7 +281,22 @@ public final class Evaluator {
         }
         return result;
     }
-
+    
+    protected boolean evaluate_or(String key, Node andNode) {
+        boolean result = true;
+        NodeList children = andNode.getChildNodes();
+        for (int k = 0; k < children.getLength(); k++) {
+            Node n = children.item(k);
+            if (n.getNodeName().equals(IN)) {
+                result = result || evaluate_in(key, n);
+            }
+            if (n.getNodeName().equals(EQUAL)) {
+                result = result || evaluate_equal(key, n);
+            }
+        }
+        return result;
+    }
+    
     protected int compareDates(String lhs, String rhs) {
         String inputDate = lhs;
         String dateRange = rhs;
@@ -307,7 +322,7 @@ public final class Evaluator {
         return 0;
     }
 
-    private String evaluate(String key, String expr) {
+    public String evaluate(String key, String expr) {
 
         if (expr.equals(CURRENT_TIME)) {
             DateFormat dateFormat = new SimpleDateFormat(YYYY_MM_DD);
@@ -334,6 +349,9 @@ public final class Evaluator {
         String rowKey = parseRowKey(key, expr);
 
         try {
+            
+            columnValue = getAttributeValue();
+            
             if (storeType.equalsIgnoreCase(HBASE)) {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
@@ -365,6 +383,10 @@ public final class Evaluator {
         }
 
         return columnValue;
+    }
+    
+    public String getAttributeValue() {
+        return null;
     }
 
     protected static String parseKeySpace(String expression) {

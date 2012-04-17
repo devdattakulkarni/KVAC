@@ -8,19 +8,21 @@ import junit.framework.Assert;
 import org.apache.hadoop.hbase.TableNotDisabledException;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HBaseAccessorTest {
 
+    private static Logger logger = LoggerFactory.getLogger(HBaseAccessorTest.class);
     HBaseAccessor hbase;
 
     @Before
     public void setup() {
-
     }
 
     @Test
     public void testGetSuccess() throws Exception {
-        System.out.println("HBase Client");
+        logger.info("HBase Client");
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
@@ -50,13 +52,13 @@ public class HBaseAccessorTest {
 
         String colValue = (String)hbase.get(keyspace, columnFamily, rowKey, columnKey,
             t1.longValue(), null);
-        System.out.println("Column Value:" + colValue);
+        logger.info("Column Value:" + colValue);
         Assert.assertEquals(columnValue, colValue);
     }
 
     @Test
     public void testGetFailure() throws Exception {
-        System.out.println("HBase Client");
+        logger.info("HBase Client");
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
@@ -83,13 +85,13 @@ public class HBaseAccessorTest {
 
         String colValue = (String)hbase.get(keyspace, columnFamily, rowKey, columnKey,
             1, null);
-        System.out.println("Column Value:" + colValue);
+        logger.info("Column Value:" + colValue);
         Assert.assertNull(colValue);
     }
 
     @Test
     public void testMultipleValuesInAColumn() throws Exception {
-        System.out.println("HBase Client");
+        logger.info("HBase Client");
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         String user = "devdatta";
         hbase = new HBaseAccessor(policyFilePath, user);
@@ -123,12 +125,12 @@ public class HBaseAccessorTest {
 
         String colValue = (String)hbase.get(keyspace, columnFamily, rowKey, columnKey,
             t1.longValue(), null);
-        System.out.println("Column Value:" + colValue);
+        logger.debug("Column Value: {}",colValue);
         Assert.assertEquals(columnValue, colValue);
 
         colValue = (String)hbase.get(keyspace, columnFamily, rowKey, columnKey, t2
             .longValue(), null);
-        System.out.println("Column Value:" + colValue);
+        logger.debug("Column Value: {}",colValue);
         Assert.assertEquals("jill", colValue);
     }
 

@@ -1,5 +1,36 @@
-Running Instructions:
+K-VAC
+------
 
+K-VAC is an access control library for key-value stores.
+K-VAC supports specification and enforcement of access control policies for 
+key-value stores at different levels of resource hierarchy, such as 
+groups of rows, specific rows, or specific columns. The policies 
+can be based on the content of rows and columns, and they may also include
+context information, such as user location and time of the day.
+
+Here you will find K-VAC's bindings for Cassandra, HBase, and MongoDB.
+
+K-VAC policies are represented in XML.
+Here we present K-VAC policies for two different applications 
+(a patient information system and a social sharing application).
+The policy files for these two applications are available at the following locations:
+- src/main/resources/PatientInfoSystemPolicy.xml
+- src/main/resources/SocialShareAppPolicy.xml
+
+With each policy definition we give the description of what that policy does.
+
+Running Instructions:
+----------------------
+- Start Cassandra
+  - Go to directory where you have downloaded Cassandra
+  - Execute ./bin/cassandra
+  - Run tests from CassandraAccessorTest
+  
+- Start HBase
+  - Go to directory where you have downloaded HBase
+  - Execute ./bin/start-hbase.sh
+  - Run tests from HBaseAccessorTest
+    
 - Start MongoDB Database Server process
   - Go to directory where you have downloaded MongoDB
   - Execute ./bin/mongod from command line
@@ -8,18 +39,6 @@ Running Instructions:
       and then run mongod.
   - Run tests from MongoDBAccessorTest
       
-- Start HBase
-  - Go to directory where you have downloaded HBase
-  - Execute ./bin/start-hbase.sh
-  - Run tests from HBaseAccessorTest
-  
-- Start Cassandra
-  - Go to directory where you have downloaded Cassandra
-  - Execute ./bin/cassandra
-  - Run tests from CassandraAccessorTest
-  
-
-Download Instructions
 
 KVAC library has been designed and tested with 
 - Casssandra version  apache-cassandra-0.8.6

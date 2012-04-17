@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.dev.kvac.Evaluator;
@@ -15,6 +17,7 @@ import com.dev.kvac.KVStoreInterface;
 
 public class CassandraAccessor implements KVStoreInterface {
 
+    private static Logger logger = LoggerFactory.getLogger(CassandraEvaluator.class);
     private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
@@ -26,7 +29,7 @@ public class CassandraAccessor implements KVStoreInterface {
         throws Exception {
         this.user = user;
         this.resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
-        this.evaluator = new Evaluator(this, "cassandra");
+        this.evaluator = new CassandraEvaluator(this, "cassandra");
         this.runtimeParams = new HashMap<String, String>();
 
         this.cassandraUtil = new CassandraUtil(user, password, keyspace);
@@ -49,7 +52,7 @@ public class CassandraAccessor implements KVStoreInterface {
 
         this.runtimeParams = runtimeParams;
 
-        System.out.println("Resource:" + resource);
+        logger.debug("Resource: {}",resource);
 
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
             resourcePolicyMap, resource);
@@ -107,7 +110,7 @@ public class CassandraAccessor implements KVStoreInterface {
     }
 
     public static void main(String args[]) throws Exception {
-        System.out.println("Cassandra Client");
+        logger.info("Cassandra Client");
 
         String user = "devdatta";
         String password = "devdatta";
@@ -125,7 +128,7 @@ public class CassandraAccessor implements KVStoreInterface {
 
         String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, System.currentTimeMillis(), null);
-        System.out.println("Column Value:" + colValue);
+        logger.info("Column Value: {}",colValue);
     }
 
     public String getRuntimeParameterValues(String key) throws Exception {

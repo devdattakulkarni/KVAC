@@ -54,7 +54,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
 
@@ -107,7 +107,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -145,7 +145,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(nurseColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, nurseColFamily);
         accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
@@ -159,7 +159,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(patientColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, patientColFamily);
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
@@ -183,7 +183,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(doctorColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, doctorColFamily);
         accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
@@ -227,7 +227,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(nurseColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, nurseColFamily);
         accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
@@ -241,7 +241,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(patientColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, patientColFamily);
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
@@ -265,7 +265,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(doctorColFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, doctorColFamily);
         accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
@@ -302,7 +302,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -315,7 +315,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -360,7 +360,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -373,7 +373,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -408,7 +408,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -421,7 +421,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         // accessor.delete(columnFamily, rowKey, columnKey);
@@ -454,7 +454,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -467,7 +467,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -503,7 +503,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -516,7 +516,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -552,7 +552,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
 
@@ -566,7 +566,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
 
@@ -599,7 +599,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamilyPatient);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamilyPatient);
 
@@ -623,7 +623,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamilyNurse);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamilyNurse);
 
@@ -658,7 +658,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamilyPatient);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamilyPatient);
 
@@ -682,7 +682,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamilyNurse);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamilyNurse);
 
@@ -717,7 +717,7 @@ public class PatientInfoSystemTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            log.debug(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
 

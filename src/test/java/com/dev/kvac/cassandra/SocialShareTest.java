@@ -40,7 +40,7 @@ public class SocialShareTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            System.out.println(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -105,7 +105,7 @@ public class SocialShareTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            System.out.println(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -159,7 +159,7 @@ public class SocialShareTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            System.out.println(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
@@ -182,7 +182,7 @@ public class SocialShareTest {
         try {
             accessor.dropColumnFamily(columnFamily);
         } catch (InvalidRequestException invalidRequest) {
-            log.info(invalidRequest.getMessage());
+            System.out.println(invalidRequest.getMessage());
         }
         accessor.addColumnFamily(keyspace, columnFamily);
 

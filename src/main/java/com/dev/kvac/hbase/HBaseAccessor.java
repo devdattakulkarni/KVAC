@@ -5,11 +5,15 @@ import java.util.Map;
 import com.dev.kvac.Evaluator;
 import com.dev.kvac.KVACUtil;
 import com.dev.kvac.KVStoreInterface;
+import com.dev.kvac.cassandra.CassandraEvaluator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class HBaseAccessor implements KVStoreInterface {
 
+    private static Logger logger = LoggerFactory.getLogger(HBaseEvaluator.class);
     private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
@@ -18,7 +22,7 @@ public class HBaseAccessor implements KVStoreInterface {
     public HBaseAccessor(String policyFilePath, String user) throws Exception {
         resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
         this.user = user;
-        this.evaluator = new Evaluator(this, "hbase");
+        this.evaluator = new HBaseEvaluator(this, "hbase");
     }
 
     public String getUser() {
@@ -32,7 +36,7 @@ public class HBaseAccessor implements KVStoreInterface {
         
         this.runtimeParams = runtimeParams;
 
-        System.out.println("Resource:" + resource);
+        logger.debug("Resource: {}",resource);
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
             resourcePolicyMap, resource);
 

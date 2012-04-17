@@ -20,7 +20,7 @@ public class MongoDBAccessor implements KVStoreInterface {
     public MongoDBAccessor(String host, int port, String user,
         String policyFilePath) throws Exception {
         this.user = user;
-        this.evaluator = new Evaluator(this, "mongodb");
+        this.evaluator = new MongoDBEvaluator(this, "mongodb");
         this.mongoUtil = new MongoDBUtil(host, port);
         resourcePolicyMap = KVACUtil.readPolicyFile(policyFilePath);
     }
