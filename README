@@ -8,6 +8,8 @@ groups of rows, specific rows, or specific columns. The policies
 can be based on the content of rows and columns, and they may also include
 context information, such as user location and time of the day.
 
+Details about the K-VAC model can be found in the document kvac-model.pdf included in the docs/ directory.
+
 Here you will find K-VAC's bindings for Cassandra, HBase, and MongoDB.
 
 K-VAC policies are represented in XML.
