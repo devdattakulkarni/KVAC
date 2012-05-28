@@ -46,4 +46,19 @@ KVAC library has been designed and tested with
 - Casssandra version  apache-cassandra-0.8.6
 - HBase version hbase-0.92.0
 - MongoDB version mongodb-osx-i386-2.0.1
-  
+
+
+Cassandra-KVAC
+---------------
+
+To compare and contrast the library based approach of KVAC presented here, 
+I have also modified the Cassandra system to perform access control using KVAC.
+This modified version of Cassandra can be found at:
+
+https://github.com/devdattakulkarni/Cassandra-KVAC
+
+
+
+
+
+
