@@ -278,6 +278,9 @@ public abstract class Evaluator {
             if (n.getNodeName().equals(EQUAL)) {
                 result = result && evaluate_equal(key, n);
             }
+            if (n.getNodeName().equals(AND)) {
+                result = result && evaluate_and(key, n);
+            }
         }
         return result;
     }

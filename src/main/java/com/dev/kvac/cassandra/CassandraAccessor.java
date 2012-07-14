@@ -52,7 +52,7 @@ public class CassandraAccessor implements KVStoreInterface {
 
         this.runtimeParams = runtimeParams;
 
-        logger.debug("Resource: {}",resource);
+        logger.debug("Resource:" + resource);
 
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
             resourcePolicyMap, resource);
@@ -61,8 +61,11 @@ public class CassandraAccessor implements KVStoreInterface {
         Node permissionNode = (Node) resAndPermisison[1];
 
         String requestedPermission = "read"; // "get" is "read"
+        long startTime = System.currentTimeMillis();
         boolean result = this.evaluator.evaluate(rowKey, permissionNode,
             requestedPermission);
+        long endTime = System.currentTimeMillis();
+        logger.debug("Total time:" + (endTime - startTime));
 
         String value = null;
         if (result) {

@@ -26,6 +26,11 @@ Running Instructions:
 - Start Cassandra
   - Go to directory where you have downloaded Cassandra
   - Execute ./bin/cassandra
+  - Go to Cassandra CLI (./cassandra-cli)
+  - Connect to the cassandra cluster
+  - Create following keyspaces:
+    - PatientInfoSystem: create keyspace PatientInfoSystem
+    - SocialShare: create keyspace SocialShare
   - Run tests from CassandraAccessorTest
   
 - Start HBase
