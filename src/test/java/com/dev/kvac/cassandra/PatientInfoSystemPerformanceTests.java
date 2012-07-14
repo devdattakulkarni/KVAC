@@ -2,10 +2,6 @@ package com.dev.kvac.cassandra;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.joda.time.DateTime;

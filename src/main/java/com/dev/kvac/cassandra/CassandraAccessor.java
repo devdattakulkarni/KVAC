@@ -15,7 +15,7 @@ import com.dev.kvac.Evaluator;
 import com.dev.kvac.KVACUtil;
 import com.dev.kvac.KVStoreInterface;
 
-public class CassandraAccessor implements KVStoreInterface, Runnable {
+public class CassandraAccessor implements KVStoreInterface {
 
     private static Logger logger = LoggerFactory
         .getLogger(CassandraAccessor.class);
@@ -24,8 +24,6 @@ public class CassandraAccessor implements KVStoreInterface, Runnable {
     private Evaluator evaluator;
     private CassandraUtil cassandraUtil;
     private Map<String, String> runtimeParams;
-
-    private Map<String, Object> dataForRunMethod = new HashMap<String, Object>();
 
     public CassandraAccessor(String policyFilePath, String user,
         String password, String keyspace, String server, int port)
@@ -45,35 +43,6 @@ public class CassandraAccessor implements KVStoreInterface, Runnable {
 
     public CassandraUtil getCassandraUtil() {
         return cassandraUtil;
-    }
-
-    public void setDataForRunMethod(String keyspace, String columnFamily,
-        String rowKey, String columnKey, long timestamp,
-        Map<String, String> runtimeParams) {
-        dataForRunMethod.put("keyspace", keyspace);
-        dataForRunMethod.put("columnFamily", columnFamily);
-        dataForRunMethod.put("rowKey", rowKey);
-        dataForRunMethod.put("columnKey", columnKey);
-        dataForRunMethod.put("timestamp", timestamp);
-        dataForRunMethod.put("runtimeParams", runtimeParams);
-    }
-
-    public void run() {
-        String keyspace = (String) dataForRunMethod.get("keyspace");
-        String columnFamily = (String) dataForRunMethod.get("columnFamily");
-        String rowKey = (String) dataForRunMethod.get("rowKey");
-        String columnKey = (String) dataForRunMethod.get("columnKey");
-        long timestamp = (Long) dataForRunMethod.get("timestamp");
-        Map<String, String> runtimeParams = (Map<String, String>) dataForRunMethod
-            .get("runtimeParams");
-
-        try {
-            Object reply = get(keyspace, columnFamily, rowKey, columnKey,
-                timestamp, runtimeParams);
-            logger.debug("Response: " + reply);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public synchronized Object get(String keyspace, String columnFamily,

@@ -15,9 +15,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import junit.framework.Assert;
 
 import org.apache.cassandra.thrift.InvalidRequestException;
@@ -27,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class PatientInfoSystemTest {
