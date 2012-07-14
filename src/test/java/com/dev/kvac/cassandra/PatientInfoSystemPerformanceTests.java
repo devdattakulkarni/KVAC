@@ -2,6 +2,10 @@ package com.dev.kvac.cassandra;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.joda.time.DateTime;
@@ -258,14 +262,15 @@ public class PatientInfoSystemPerformanceTests {
                 queryColumnFamily, queryRowKey, queryColumnKey, 1, null);
             long end = System.currentTimeMillis();
             totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
+            log.info("Column Value:" + colValue);
         }
         double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
+        log.info("Avg time:" + avgTime);
     }
-    
+
     @Test
-    public void testGetColumnWithEightQueriesToCFInKVACPolicy() throws Exception {
+    public void testGetColumnWithEightQueriesToCFInKVACPolicy()
+        throws Exception {
         String user = "devdatta";
         String password = "devdatta";
         String keyspace = "PatientInfoSystem";
@@ -344,9 +349,10 @@ public class PatientInfoSystemPerformanceTests {
         double avgTime = totalTime / numberOfExperiments;
         log.debug("Avg time:" + avgTime);
     }
-    
+
     @Test
-    public void testGetColumnWithSixteenQueriesToCFInKVACPolicy() throws Exception {
+    public void testGetColumnWithSixteenQueriesToCFInKVACPolicy()
+        throws Exception {
         String user = "devdatta";
         String password = "devdatta";
         String keyspace = "PatientInfoSystem";
@@ -424,8 +430,8 @@ public class PatientInfoSystemPerformanceTests {
         }
         double avgTime = totalTime / numberOfExperiments;
         log.debug("Avg time:" + avgTime);
-    }   
-    
+    }
+
     @Test
     public void testGetColumnWith32QueriesToCFInKVACPolicy() throws Exception {
         String user = "devdatta";
@@ -505,5 +511,5 @@ public class PatientInfoSystemPerformanceTests {
         }
         double avgTime = totalTime / numberOfExperiments;
         log.debug("Avg time:" + avgTime);
-    }        
+    }
 }

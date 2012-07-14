@@ -39,13 +39,16 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CassandraUtil {
 
-    private static TTransport transport = null;
-    private static Cassandra.Client thriftClient = null;
-    public static CliSessionState sessionState = null;
-    private static CliClient cliClient;
+    private static Logger log = LoggerFactory.getLogger(CassandraUtil.class);
+    private TTransport transport = null;
+    private Cassandra.Client thriftClient = null;
+    public CliSessionState sessionState = null;
+    private CliClient cliClient;
 
     public CassandraUtil(String user, String password, String keyspace) {
         sessionState = new CliSessionState();
@@ -160,8 +163,10 @@ public class CassandraUtil {
             }
             return;
         }
-        sessionState.out.printf("Connected to: \"%s\" on %s/%d%n", clusterName,
-            server, port);
+        if (log.isDebugEnabled()) {
+            sessionState.out.printf("Connected to: \"%s\" on %s/%d%n",
+                clusterName, server, port);
+        }
     }
 
     public Object get(String columnFamily, String rowKey, String column)
@@ -242,8 +247,8 @@ public class CassandraUtil {
             colNameColValue.lastIndexOf("|"));
     }
 
-    public void add(String columnFamily, String rowKey, String column,
-        Object value, long timestamp) throws Exception {
+    public void add(String keyspace, String columnFamily, String rowKey,
+        String column, Object value, long timestamp) throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
 
         byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
@@ -268,8 +273,8 @@ public class CassandraUtil {
         col.setTimestamp(timestamp);
 
         ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);
+        thriftClient.set_keyspace(keyspace);
         thriftClient.insert(keyOfAccessor, colParent, col, consistency_level);
-
     }
 
     public void delete(String columnFamily, String rowKey, String column)
@@ -294,11 +299,23 @@ public class CassandraUtil {
         thriftClient.system_drop_column_family(columnFamily);
     }
 
-    public void addColumnFamily(String keyspace, String columnFamily)
-        throws Exception {
-        CfDef c = new CfDef(keyspace, columnFamily);
+    public synchronized void addColumnFamily(String keyspace,
+        String columnFamily) throws Exception {
 
-        thriftClient.system_add_column_family(c);
+        KsDef kspace = thriftClient.describe_keyspace(keyspace);
+        List<CfDef> columnFamilies = kspace.getCf_defs();
+        boolean cfPresent = false;
+        for (CfDef cf : columnFamilies) {
+            String cfName = cf.getName();
+            if (cfName.toLowerCase().contains(columnFamily.toLowerCase())) {
+                cfPresent = true;
+            }
+        }
+
+        if (!cfPresent) {
+            CfDef c = new CfDef(keyspace, columnFamily);
+            thriftClient.system_add_column_family(c);
+        }
     }
 
 }

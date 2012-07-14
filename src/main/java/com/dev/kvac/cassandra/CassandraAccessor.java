@@ -15,14 +15,17 @@ import com.dev.kvac.Evaluator;
 import com.dev.kvac.KVACUtil;
 import com.dev.kvac.KVStoreInterface;
 
-public class CassandraAccessor implements KVStoreInterface {
+public class CassandraAccessor implements KVStoreInterface, Runnable {
 
-    private static Logger logger = LoggerFactory.getLogger(CassandraEvaluator.class);
+    private static Logger logger = LoggerFactory
+        .getLogger(CassandraAccessor.class);
     private Map<Node, Node> resourcePolicyMap;
     private String user;
     private Evaluator evaluator;
     private CassandraUtil cassandraUtil;
     private Map<String, String> runtimeParams;
+
+    private Map<String, Object> dataForRunMethod = new HashMap<String, Object>();
 
     public CassandraAccessor(String policyFilePath, String user,
         String password, String keyspace, String server, int port)
@@ -44,15 +47,46 @@ public class CassandraAccessor implements KVStoreInterface {
         return cassandraUtil;
     }
 
-    public Object get(String keyspace, String columnFamily, String rowKey,
-        String columnKey, long timestamp, Map<String, String> runtimeParams)
-        throws Exception {
+    public void setDataForRunMethod(String keyspace, String columnFamily,
+        String rowKey, String columnKey, long timestamp,
+        Map<String, String> runtimeParams) {
+        dataForRunMethod.put("keyspace", keyspace);
+        dataForRunMethod.put("columnFamily", columnFamily);
+        dataForRunMethod.put("rowKey", rowKey);
+        dataForRunMethod.put("columnKey", columnKey);
+        dataForRunMethod.put("timestamp", timestamp);
+        dataForRunMethod.put("runtimeParams", runtimeParams);
+    }
+
+    public void run() {
+        String keyspace = (String) dataForRunMethod.get("keyspace");
+        String columnFamily = (String) dataForRunMethod.get("columnFamily");
+        String rowKey = (String) dataForRunMethod.get("rowKey");
+        String columnKey = (String) dataForRunMethod.get("columnKey");
+        long timestamp = (Long) dataForRunMethod.get("timestamp");
+        Map<String, String> runtimeParams = (Map<String, String>) dataForRunMethod
+            .get("runtimeParams");
+
+        try {
+            Object reply = get(keyspace, columnFamily, rowKey, columnKey,
+                timestamp, runtimeParams);
+            logger.debug("Response: " + reply);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized Object get(String keyspace, String columnFamily,
+        String rowKey, String columnKey, long timestamp,
+        Map<String, String> runtimeParams) throws Exception {
 
         String resource = "/" + keyspace + "/" + columnFamily + "/" + columnKey;
 
         this.runtimeParams = runtimeParams;
 
-        logger.debug("Resource:" + resource);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Resource:" + resource);
+        }
 
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
             resourcePolicyMap, resource);
@@ -65,7 +99,10 @@ public class CassandraAccessor implements KVStoreInterface {
         boolean result = this.evaluator.evaluate(rowKey, permissionNode,
             requestedPermission);
         long endTime = System.currentTimeMillis();
-        logger.debug("Total time:" + (endTime - startTime));
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Total time:" + (endTime - startTime));
+        }
 
         String value = null;
         if (result) {
@@ -79,7 +116,7 @@ public class CassandraAccessor implements KVStoreInterface {
                 value = (String) input.readObject();
             } else if (resourceType.equalsIgnoreCase("row")) {
                 value = cassandraUtil.getRow(columnFamily, rowKey);
-            }           
+            }
         }
         return value;
     }
@@ -89,9 +126,11 @@ public class CassandraAccessor implements KVStoreInterface {
         return (String) cassandraUtil.get(columnFamily, rowKey, columnKey);
     }
 
-    public void put(String keyspace, String columnFamily, String rowKey,
-        String columnKey, Object value, long timestamp) throws Exception {
-        cassandraUtil.add(columnFamily, rowKey, columnKey, value, timestamp);
+    public synchronized void put(String keyspace, String columnFamily,
+        String rowKey, String columnKey, Object value, long timestamp)
+        throws Exception {
+        cassandraUtil.add(keyspace, columnFamily, rowKey, columnKey, value,
+            timestamp);
     }
 
     public void delete(String columnFamily, String rowKey, String column)
@@ -99,11 +138,11 @@ public class CassandraAccessor implements KVStoreInterface {
         cassandraUtil.delete(columnFamily, rowKey, column);
     }
 
-    public void dropColumnFamily(String columnFamily) throws Exception {
+    public synchronized void dropColumnFamily(String columnFamily) throws Exception {
         cassandraUtil.dropColumnFamily(columnFamily);
     }
 
-    public void addColumnFamily(String keyspace, String columnFamily)
+    public synchronized void addColumnFamily(String keyspace, String columnFamily)
         throws Exception {
         cassandraUtil.addColumnFamily(keyspace, columnFamily);
     }
@@ -131,7 +170,7 @@ public class CassandraAccessor implements KVStoreInterface {
 
         String colValue = (String) accessor.get(keyspace, columnFamily, rowKey,
             columnKey, System.currentTimeMillis(), null);
-        logger.info("Column Value: {}",colValue);
+        logger.info("Column Value: {}", colValue);
     }
 
     public String getRuntimeParameterValues(String key) throws Exception {
