@@ -90,6 +90,7 @@ public class CassandraUtil {
                 + "/" + port + ". Reason: " + error + ".");
         }
 
+        /*
         try {
             cassandraClient.describe_keyspace(sessionState.keyspace);
         } catch (InvalidRequestException e1) {
@@ -114,7 +115,7 @@ public class CassandraUtil {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-        }
+        } */
 
         thriftClient = cassandraClient;
         cliClient = new CliClient(sessionState, thriftClient);
