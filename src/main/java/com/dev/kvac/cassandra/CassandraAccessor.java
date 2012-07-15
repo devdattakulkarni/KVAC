@@ -79,10 +79,10 @@ public class CassandraAccessor implements KVStoreInterface {
             if (resourceType.equalsIgnoreCase("column")) {
                 val = (byte[]) cassandraUtil.get(columnFamily, rowKey,
                     columnKey);
-                BufferedInputStream buffer = new BufferedInputStream(
-                    new ByteArrayInputStream(val));
-                ObjectInput input = new ObjectInputStream(buffer);
-                value = (String) input.readObject();
+                //BufferedInputStream buffer = new BufferedInputStream(
+                //    new ByteArrayInputStream(val));
+                //ObjectInput input = new ObjectInputStream(buffer);
+                value = new String(val); //(String) input.readObject();
             } else if (resourceType.equalsIgnoreCase("row")) {
                 value = cassandraUtil.getRow(columnFamily, rowKey);
             }

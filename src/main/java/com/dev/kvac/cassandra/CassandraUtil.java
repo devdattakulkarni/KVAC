@@ -174,7 +174,8 @@ public class CassandraUtil {
         throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
         // String t1 = "jsmith";
-        byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+        //byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+        byte[] t1array = rowKey.getBytes("UTF8");
         keyOfAccessor = ByteBuffer.wrap(t1array);
 
         // 2.2 Create the ColumnPath
@@ -236,10 +237,10 @@ public class CassandraUtil {
                 ColumnOrSuperColumn c = cols.get(j);
                 colNameColValue.append(new String(c.getColumn().getName()));
                 byte[] val = (byte[]) c.getColumn().getValue();
-                BufferedInputStream buffer = new BufferedInputStream(
-                    new ByteArrayInputStream(val));
-                ObjectInput input = new ObjectInputStream(buffer);
-                String value = (String) input.readObject();
+                //BufferedInputStream buffer = new BufferedInputStream(
+                //    new ByteArrayInputStream(val));
+                //ObjectInput input = new ObjectInputStream(buffer);
+                String value = new String(val);//(String) input.readObject();
                 colNameColValue.append(":" + value + "|");
             }
         }
@@ -270,7 +271,13 @@ public class CassandraUtil {
         byte[] buf = bos.toByteArray();
 
         // col.setValue(((String) value).getBytes());
-        col.setValue(buf);
+        //col.setValue(buf);
+        
+        ByteBuffer valueByteBuffer = ByteBuffer.allocate(6);
+        byte[] valByteArray = ((String)value).getBytes(Charset.forName("ISO-8859-1"));
+        valueByteBuffer = ByteBuffer.wrap(valByteArray);
+        
+        col.setValue(valueByteBuffer);
         col.setTimestamp(timestamp);
 
         ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);

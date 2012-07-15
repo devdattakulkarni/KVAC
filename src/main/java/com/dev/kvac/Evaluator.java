@@ -1,9 +1,5 @@
 package com.dev.kvac;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -11,12 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -148,23 +139,6 @@ public abstract class Evaluator {
 
         result = rhsResult.contains(lhsResult);
 
-        /*
-         * if (lhsNode != null && rhsNode != null) { NodeList rhsNodeChildren =
-         * rhsNode.getChildNodes(); if (rhsNodeChildren != null &&
-         * rhsNodeChildren.getLength() > 0) { for (int k = 0; k <
-         * rhsNodeChildren.getLength(); k++) { Node n = rhsNodeChildren.item(k);
-         * if (n.getNodeName().equals(MINUS)) { rhsResult = evaluate_minus(key,
-         * n); } } } else { String rhs = rhsNode.getTextContent().trim();
-         * rhsResult = evaluate(key, rhs); }
-         * 
-         * result = rhsResult.contains(lhsResult);
-         * 
-         * String rhs = rhsNode.getTextContent().trim(); rhsResult =
-         * evaluate(key, rhs);
-         * 
-         * return (rhsResult.contains(lhsResult)); }
-         */
-
         return result;
     }
 
@@ -208,11 +182,6 @@ public abstract class Evaluator {
         }
 
         Integer days;
-        //DateTime startPoint;
-
-        //DateTimeFormatter fmt = DateTimeFormat.forPattern(YYYY_MM_DD);  
-        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy/MM/dd");
-        //DateTime dateTime = formatter.parseDateTime(dateString);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
         Date startPoint = null;
@@ -362,10 +331,7 @@ public abstract class Evaluator {
                 byte [] val = (byte[])((CassandraAccessor) kvstore).getCassandraUtil()
                     .get(columnFamily, rowKey, column);
                 
-                BufferedInputStream buffer = new BufferedInputStream( new ByteArrayInputStream(val) );
-                ObjectInput input = new ObjectInputStream ( buffer );
-                
-                columnValue = (String)input.readObject();
+                columnValue = new String(val);
 
                 if (parameterizedColValue != null) {
                     String actualColValue = kvstore
@@ -469,12 +435,6 @@ public abstract class Evaluator {
         int start = expression.indexOf("(");
         int end = expression.indexOf(")");
         String keyVal = expression.substring(start + 1, end);
-
-        // Pattern thisKeyPattern = Pattern.compile("key=thisKey");
-        // Matcher thisKeyMatcher = thisKeyPattern.matcher(keyVal);
-
-        // Pattern userNamePattern = Pattern.compile("key=user.name");
-        // Matcher userNameMatcher = userNamePattern.matcher(keyVal);
 
         if (keyVal.equals("key=thisKey")) {
             return inputKey;

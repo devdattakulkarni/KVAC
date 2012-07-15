@@ -91,7 +91,7 @@
         </permission>
     </policy>
     <policy>
-        <resource type="row" description="A nurse patient information of only those patients corresponding to the ward in which the nurse is present">
+        <resource type="column" description="A nurse patient information of only those patients corresponding to the ward in which the nurse is present">
             /PatientInfoSystem/Patient/patient_info
         </resource>
         <permission>

@@ -1,7 +1,9 @@
 package com.dev.kvac.cassandra;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 import org.apache.cassandra.thrift.InvalidRequestException;
 import org.joda.time.DateTime;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class PatientInfoSystemPerformanceTests {
     CassandraAccessor cassandra;
     private final Logger log = LoggerFactory.getLogger(CassandraAccessor.class);
-    private int numberOfExperiments = 10;
+    private int numberOfExperiments = 15;
 
     @Before
     public void setup() {
@@ -51,7 +53,7 @@ public class PatientInfoSystemPerformanceTests {
         columnKey = "education";
         columnValue = "PhD";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
-
+     
         long totalTime = 0;
         for (int i = 0; i < numberOfExperiments; i++) {
             long start = System.currentTimeMillis();
@@ -71,7 +73,7 @@ public class PatientInfoSystemPerformanceTests {
         String password = "devdatta";
         String keyspace = "PatientInfoSystem";
         String server = "localhost";
-        int port = 9160;
+        int port = 9170;
 
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
@@ -114,18 +116,8 @@ public class PatientInfoSystemPerformanceTests {
 
         accessor.put(keyspace, columnFamilyNurse, rowKeyNurse, columnKeyNurse,
             columnValueNurse, 1);
-
-        long totalTime = 0;
-        for (int i = 0; i < numberOfExperiments; i++) {
-            long start = System.currentTimeMillis();
-            String colValue = (String) accessor.get(keyspace,
-                columnFamilyPatient, rowKeyPatient, columnKeyPatient, 1, null);
-            long end = System.currentTimeMillis();
-            totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
-        }
-        double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
+        
+        doGet(accessor, keyspace, columnFamilyPatient, rowKeyPatient, columnKeyPatient); 
     }
 
     @Test
@@ -134,7 +126,7 @@ public class PatientInfoSystemPerformanceTests {
         String password = "devdatta";
         String keyspace = "PatientInfoSystem";
         String server = "localhost";
-        int port = 9160;
+        int port = 9170;
 
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
@@ -170,33 +162,95 @@ public class PatientInfoSystemPerformanceTests {
         columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
-        long totalTime = 0;
-        for (int i = 0; i < numberOfExperiments; i++) {
-            long start = System.currentTimeMillis();
-            String colValue = (String) accessor.get(keyspace, columnFamily,
-                rowKey, columnKey, 1, null);
-            long end = System.currentTimeMillis();
-            totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
-        }
-        double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
+        doGet(accessor, keyspace, columnFamily, rowKey, columnKey);
     }
 
     @Test
-    public void testGetColumnWithFourQueriesToCFInKVACPolicy() throws Exception {
-        String user = "devdatta";
-        String password = "devdatta";
+    public void testGetColumnWithFiveQueriesToCFInKVACPolicy() throws Exception {
+        String user = "kulkarni1";
+        String password = "kulkarni1";
         String keyspace = "PatientInfoSystem";
         String server = "localhost";
-        int port = 9160;
+        int port = 9170;
 
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
         CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
             user, password, keyspace, server, port);
 
         String nurseColFamily = "Nurse";
-        String nurseRowkey = "devdatta";
+        String nurseRowkey = "kulkarni1";
+        String nurseColkey = "location";
+        String nurseColVal = "ward-3";
+
+        try {
+            accessor.dropColumnFamily(nurseColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.debug(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, nurseColFamily);
+        accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
+            nurseColVal, 1);
+
+        String patientColFamily = "Patient";
+        String patientRowkey = "james";
+        String patientColkey = "location";
+        String patientColVal = "ward-3";
+
+        try {
+            accessor.dropColumnFamily(patientColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.debug(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, patientColFamily);
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "curr_doctor";
+        patientColVal = "yk";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        patientColkey = "patient_reports";
+        patientColVal = "Has cold. No flu symptoms - 5 12345";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        String doctorColFamily = "Doctor";
+        String doctorRowkey = "yk";
+        String doctorColkey = "location";
+        String doctorColVal = "ward-3";
+
+        try {
+            accessor.dropColumnFamily(doctorColFamily);
+        } catch (InvalidRequestException invalidRequest) {
+            log.debug(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, doctorColFamily);
+        accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
+            doctorColVal, 1);
+
+        String queryColumnFamily = "Patient";
+        String queryRowKey = "james";
+        String queryColumnKey = "patient_reports";
+        
+        doGet(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
+    }
+
+    @Test
+    public void testGetColumnWithTenQueriesToCFInKVACPolicy()
+        throws Exception {
+        String user = "kulkarni2";
+        String password = "kulkarni2";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9170;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicyForTest.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String nurseColFamily = "Nurse";
+        String nurseRowkey = "kulkarni2";
         String nurseColkey = "location";
         String nurseColVal = "ward-1";
 
@@ -210,7 +264,7 @@ public class PatientInfoSystemPerformanceTests {
             nurseColVal, 1);
 
         String patientColFamily = "Patient";
-        String patientRowkey = "john";
+        String patientRowkey = "jedi";
         String patientColkey = "location";
         String patientColVal = "ward-1";
 
@@ -224,17 +278,17 @@ public class PatientInfoSystemPerformanceTests {
             patientColVal, 1);
 
         patientColkey = "curr_doctor";
-        patientColVal = "pk";
+        patientColVal = "nk";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         patientColkey = "patient_reports";
-        patientColVal = "Has cold. No flu symptoms";
+        patientColVal = "Jedi has flu.";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         String doctorColFamily = "Doctor";
-        String doctorRowkey = "pk";
+        String doctorRowkey = "nk";
         String doctorColkey = "location";
         String doctorColVal = "ward-1";
 
@@ -248,37 +302,27 @@ public class PatientInfoSystemPerformanceTests {
             doctorColVal, 1);
 
         String queryColumnFamily = "Patient";
-        String queryRowKey = "john";
+        String queryRowKey = "jedi";
         String queryColumnKey = "patient_reports";
-
-        long totalTime = 0;
-        for (int i = 0; i < numberOfExperiments; i++) {
-            long start = System.currentTimeMillis();
-            String colValue = (String) accessor.get(keyspace,
-                queryColumnFamily, queryRowKey, queryColumnKey, 1, null);
-            long end = System.currentTimeMillis();
-            totalTime += (end - start);
-            log.info("Column Value:" + colValue);
-        }
-        double avgTime = totalTime / numberOfExperiments;
-        log.info("Avg time:" + avgTime);
+        
+        doGet(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
     }
 
     @Test
-    public void testGetColumnWithEightQueriesToCFInKVACPolicy()
+    public void testGetColumnWith20QueriesToCFInKVACPolicy()
         throws Exception {
-        String user = "devdatta";
-        String password = "devdatta";
+        String user = "kulkarni3";
+        String password = "kulkarni3";
         String keyspace = "PatientInfoSystem";
         String server = "localhost";
-        int port = 9160;
+        int port = 9170;
 
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicyForTest.xml";
         CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
             user, password, keyspace, server, port);
 
         String nurseColFamily = "Nurse";
-        String nurseRowkey = "devdatta";
+        String nurseRowkey = "kulkarni3";
         String nurseColkey = "location";
         String nurseColVal = "ward-1";
 
@@ -292,7 +336,7 @@ public class PatientInfoSystemPerformanceTests {
             nurseColVal, 1);
 
         String patientColFamily = "Patient";
-        String patientRowkey = "john";
+        String patientRowkey = "jgaddar";
         String patientColkey = "location";
         String patientColVal = "ward-1";
 
@@ -306,99 +350,17 @@ public class PatientInfoSystemPerformanceTests {
             patientColVal, 1);
 
         patientColkey = "curr_doctor";
-        patientColVal = "pk";
-        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
-            patientColVal, 1);
-
-        patientColkey = "patient_reports";
-        patientColVal = "Has cold. No flu symptoms";
-        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
-            patientColVal, 1);
-
-        String doctorColFamily = "Doctor";
-        String doctorRowkey = "pk";
-        String doctorColkey = "location";
-        String doctorColVal = "ward-1";
-
-        try {
-            accessor.dropColumnFamily(doctorColFamily);
-        } catch (InvalidRequestException invalidRequest) {
-            log.debug(invalidRequest.getMessage());
-        }
-        accessor.addColumnFamily(keyspace, doctorColFamily);
-        accessor.put(keyspace, doctorColFamily, doctorRowkey, doctorColkey,
-            doctorColVal, 1);
-
-        String queryColumnFamily = "Patient";
-        String queryRowKey = "john";
-        String queryColumnKey = "patient_reports";
-
-        long totalTime = 0;
-        for (int i = 0; i < numberOfExperiments; i++) {
-            long start = System.currentTimeMillis();
-            String colValue = (String) accessor.get(keyspace,
-                queryColumnFamily, queryRowKey, queryColumnKey, 1, null);
-            long end = System.currentTimeMillis();
-            totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
-        }
-        double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
-    }
-
-    @Test
-    public void testGetColumnWithSixteenQueriesToCFInKVACPolicy()
-        throws Exception {
-        String user = "devdatta";
-        String password = "devdatta";
-        String keyspace = "PatientInfoSystem";
-        String server = "localhost";
-        int port = 9160;
-
-        String policyFilePath = "src/main/resources/PatientInfoSystemPolicyForTest.xml";
-        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
-            user, password, keyspace, server, port);
-
-        String nurseColFamily = "Nurse";
-        String nurseRowkey = "devdatta";
-        String nurseColkey = "location";
-        String nurseColVal = "ward-1";
-
-        try {
-            accessor.dropColumnFamily(nurseColFamily);
-        } catch (InvalidRequestException invalidRequest) {
-            log.debug(invalidRequest.getMessage());
-        }
-        accessor.addColumnFamily(keyspace, nurseColFamily);
-        accessor.put(keyspace, nurseColFamily, nurseRowkey, nurseColkey,
-            nurseColVal, 1);
-
-        String patientColFamily = "Patient";
-        String patientRowkey = "john";
-        String patientColkey = "location";
-        String patientColVal = "ward-1";
-
-        try {
-            accessor.dropColumnFamily(patientColFamily);
-        } catch (InvalidRequestException invalidRequest) {
-            log.debug(invalidRequest.getMessage());
-        }
-        accessor.addColumnFamily(keyspace, patientColFamily);
-        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
-            patientColVal, 1);
-
-        patientColkey = "curr_doctor";
-        patientColVal = "pk";
+        patientColVal = "mk";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         patientColkey = "patient_reports_16";
-        patientColVal = "Has cold. No flu symptoms";
+        patientColVal = "JGaddar has tonsils.";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         String doctorColFamily = "Doctor";
-        String doctorRowkey = "pk";
+        String doctorRowkey = "mk";
         String doctorColkey = "location";
         String doctorColVal = "ward-1";
 
@@ -412,36 +374,26 @@ public class PatientInfoSystemPerformanceTests {
             doctorColVal, 1);
 
         String queryColumnFamily = "Patient";
-        String queryRowKey = "john";
+        String queryRowKey = "jgaddar";
         String queryColumnKey = "patient_reports_16";
-
-        long totalTime = 0;
-        for (int i = 0; i < numberOfExperiments; i++) {
-            long start = System.currentTimeMillis();
-            String colValue = (String) accessor.get(keyspace,
-                queryColumnFamily, queryRowKey, queryColumnKey, 1, null);
-            long end = System.currentTimeMillis();
-            totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
-        }
-        double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
+        
+        doGet(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
     }
 
     @Test
     public void testGetColumnWith32QueriesToCFInKVACPolicy() throws Exception {
-        String user = "devdatta";
-        String password = "devdatta";
+        String user = "kulkarni3";
+        String password = "kulkarni3";
         String keyspace = "PatientInfoSystem";
         String server = "localhost";
-        int port = 9160;
+        int port = 9170;
 
         String policyFilePath = "src/main/resources/PatientInfoSystemPolicyForTest.xml";
         CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
             user, password, keyspace, server, port);
 
         String nurseColFamily = "Nurse";
-        String nurseRowkey = "devdatta";
+        String nurseRowkey = "kulkarni3";
         String nurseColkey = "location";
         String nurseColVal = "ward-1";
 
@@ -455,7 +407,7 @@ public class PatientInfoSystemPerformanceTests {
             nurseColVal, 1);
 
         String patientColFamily = "Patient";
-        String patientRowkey = "john";
+        String patientRowkey = "jpees";
         String patientColkey = "location";
         String patientColVal = "ward-1";
 
@@ -469,17 +421,17 @@ public class PatientInfoSystemPerformanceTests {
             patientColVal, 1);
 
         patientColkey = "curr_doctor";
-        patientColVal = "pk";
+        patientColVal = "lk";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         patientColkey = "patient_reports_32";
-        patientColVal = "Has cold. No flu symptoms";
+        patientColVal = "JPees has runny nose.";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
         String doctorColFamily = "Doctor";
-        String doctorRowkey = "pk";
+        String doctorRowkey = "lk";
         String doctorColkey = "location";
         String doctorColVal = "ward-1";
 
@@ -493,19 +445,35 @@ public class PatientInfoSystemPerformanceTests {
             doctorColVal, 1);
 
         String queryColumnFamily = "Patient";
-        String queryRowKey = "john";
+        String queryRowKey = "jpees";
         String queryColumnKey = "patient_reports_32";
+        
+        doGet(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
+    }
 
-        long totalTime = 0;
+    private void doGet(CassandraAccessor accessor, String keyspace,
+        String queryColumnFamily, String queryRowKey, String queryColumnKey)
+        throws Exception {
+        double totalTime = 0;
+        long[] times = new long[numberOfExperiments];
         for (int i = 0; i < numberOfExperiments; i++) {
             long start = System.currentTimeMillis();
+
             String colValue = (String) accessor.get(keyspace,
                 queryColumnFamily, queryRowKey, queryColumnKey, 1, null);
+
             long end = System.currentTimeMillis();
             totalTime += (end - start);
-            log.debug("Column Value:" + colValue);
+            times[i] = (end - start);
+            log.info("Time: " + (end - start));
+            log.info("Column Value:" + colValue);
         }
-        double avgTime = totalTime / numberOfExperiments;
-        log.debug("Avg time:" + avgTime);
+        log.info("Total time:" + totalTime);
+        Double avgTime = totalTime / numberOfExperiments;
+        DecimalFormat df = new DecimalFormat("#.##");
+        log.info("Avg time:" + df.format(avgTime));
+        Arrays.sort(times);
+        long median = times[numberOfExperiments / 2];
+        log.info("Median time:" + median);
     }
 }
