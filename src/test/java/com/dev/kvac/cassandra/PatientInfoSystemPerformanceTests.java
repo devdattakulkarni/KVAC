@@ -66,6 +66,59 @@ public class PatientInfoSystemPerformanceTests {
         double avgTime = totalTime / numberOfExperiments;
         log.debug("Avg time:" + avgTime);
     }
+    
+    @Test
+    public void testGetColumnWithOneQueryToCFInKVACPolicyCFsPresent() throws Exception {
+        String user = "devdatta";
+        String password = "devdatta";
+        String keyspace = "PatientInfoSystem";
+        String server = "localhost";
+        int port = 9170;
+
+        String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath,
+            user, password, keyspace, server, port);
+
+        String columnFamilyPatient = "Patient";
+        String rowKeyPatient = "jack";
+        String columnKeyPatient = "medical_history";
+        String columnValuePatient = "Cough";
+
+/*        try {
+            accessor.dropColumnFamily(columnFamilyPatient);
+        } catch (InvalidRequestException invalidRequest) {
+            log.debug(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamilyPatient);
+
+        accessor.put(keyspace, columnFamilyPatient, rowKeyPatient,
+            columnKeyPatient, columnValuePatient, 1);
+
+        String columnFamilyNurse = "Nurse";
+        String rowKeyNurse = "devdatta";
+        String columnKeyNurse = "work_hours";
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateTime date = new DateTime();
+        DateTime startDate = date.minusDays(2);
+        DateTime endDate = date.plusDays(1);
+
+        String startWorkHour = dateFormat.format(startDate.toDate());
+        String endWorkHour = dateFormat.format(endDate.toDate());
+        String columnValueNurse = startWorkHour + "-" + endWorkHour;
+
+        try {
+            accessor.dropColumnFamily(columnFamilyNurse);
+        } catch (InvalidRequestException invalidRequest) {
+            log.debug(invalidRequest.getMessage());
+        }
+        accessor.addColumnFamily(keyspace, columnFamilyNurse);
+
+        accessor.put(keyspace, columnFamilyNurse, rowKeyNurse, columnKeyNurse,
+            columnValueNurse, 1);
+        */
+        doGet(accessor, keyspace, columnFamilyPatient, rowKeyPatient, columnKeyPatient); 
+    }    
 
     @Test
     public void testGetColumnWithOneQueryToCFInKVACPolicy() throws Exception {

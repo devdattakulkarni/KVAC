@@ -21,7 +21,7 @@ public class MultiThreadTests {
     // Setup and initiate Poller thread executor
     private ScheduledExecutorService accessorThreadExecutor = Executors
         .newSingleThreadScheduledExecutor();
-    int numberOfThreads = 1;
+    int numberOfThreads = 500;
     ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
 
     public static void main(String[] args) throws Exception {
@@ -69,7 +69,7 @@ class CassandraIO<T> implements Callable<Object> {
     int port = 9160;
     String policyFilePath = "src/main/resources/PatientInfoSystemPolicy.xml";
     String threadNumber;
-    int numberOfExperiments = 10;
+    int numberOfExperiments = 1;
 
     public CassandraIO(String patientNumber) throws Exception {
         this.threadNumber = patientNumber;

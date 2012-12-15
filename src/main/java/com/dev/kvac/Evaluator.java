@@ -328,8 +328,14 @@ public abstract class Evaluator {
                 columnValue = HBaseUtil.get(keyspace, rowKey, column, 1);
             }
             if (storeType.equalsIgnoreCase(CASSANDRA)) {
+                long st = System.currentTimeMillis();
                 byte [] val = (byte[])((CassandraAccessor) kvstore).getCassandraUtil()
                     .get(columnFamily, rowKey, column);
+                long et = System.currentTimeMillis();
+                long tt = et - st;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Query time:" + tt);
+                }
                 
                 columnValue = new String(val);
 

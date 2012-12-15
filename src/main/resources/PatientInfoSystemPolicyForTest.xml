@@ -53,7 +53,7 @@
     
     <policy>
         <resource type="column" description="A nurse can access a patient's reports only when the nurse and a doctor are present in patient's room">
-            /PatientInfoSystem/Patient/patient_reports_16
+            /PatientInfoSystem/Patient/patient_reports_20
         </resource>
         <permission>
             <value>
@@ -144,7 +144,7 @@
     
     <policy>
         <resource type="column" description="A nurse can access a patient's reports only when the nurse and a doctor are present in patient's room">
-            /PatientInfoSystem/Patient/patient_reports_32
+            /PatientInfoSystem/Patient/patient_reports_40
         </resource>
         <permission>
             <value>

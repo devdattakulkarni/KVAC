@@ -92,7 +92,8 @@ public class CassandraAccessor implements KVStoreInterface {
 
     public String direct_get(String keyspace, String columnFamily,
         String rowKey, String columnKey, long timestamp) throws Exception {
-        return (String) cassandraUtil.get(columnFamily, rowKey, columnKey);
+        byte [] obj = (byte [])cassandraUtil.get(columnFamily, rowKey, columnKey);
+        return new String(obj);
     }
 
     public synchronized void put(String keyspace, String columnFamily,

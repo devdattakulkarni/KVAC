@@ -187,8 +187,12 @@ public class CassandraUtil {
         try {
             ConsistencyLevel consistency_level = ConsistencyLevel
                 .findByValue(1);
+            long start = System.currentTimeMillis();
             retColumn = thriftClient.get(keyOfAccessor, accessorColPath,
                 consistency_level).column;
+            long end = System.currentTimeMillis();
+            long totTime = end - start;
+            log.debug("Query time:" + totTime);
 
         } catch (NotFoundException e) {
             e.printStackTrace();
@@ -197,8 +201,6 @@ public class CassandraUtil {
 
         byte[] columnValue = retColumn.getValue();
 
-        // String value = new String(columnValue);
-        // System.out.println("Got Value:" + value);
         return columnValue;
     }
 
@@ -322,6 +324,8 @@ public class CassandraUtil {
 
         if (!cfPresent) {
             CfDef c = new CfDef(keyspace, columnFamily);
+            c.key_cache_size = 0;
+            c.row_cache_size = 0;
             thriftClient.system_add_column_family(c);
         }
     }

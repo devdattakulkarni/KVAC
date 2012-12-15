@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<adminrules>
+    <grant>
+        <permission>
+            read
+        </permission>
+        <resource>
+        	/PatientInfoSystem/Patient
+        </resource>
+		<user>
+			Doctor
+	    </user>
+    </grant>
+</adminrules>
