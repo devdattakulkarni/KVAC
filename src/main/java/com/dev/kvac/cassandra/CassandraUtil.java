@@ -192,7 +192,7 @@ public class CassandraUtil {
                 consistency_level).column;
             long end = System.currentTimeMillis();
             long totTime = end - start;
-            log.debug("Query time:" + totTime);
+            //log.debug("Query time:" + totTime);
 
         } catch (NotFoundException e) {
             e.printStackTrace();

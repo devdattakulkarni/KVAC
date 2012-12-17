@@ -53,9 +53,9 @@ public class CassandraAccessor implements KVStoreInterface {
 
         this.runtimeParams = runtimeParams;
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Resource:" + resource);
-        }
+        //if (logger.isDebugEnabled()) {
+        //    logger.debug("Resource:" + resource);
+        //}
 
         Object[] resAndPermisison = KVACUtil.findPermissionNodeForResource(
             resourcePolicyMap, resource);
@@ -69,9 +69,9 @@ public class CassandraAccessor implements KVStoreInterface {
             requestedPermission);
         long endTime = System.currentTimeMillis();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Total time:" + (endTime - startTime));
-        }
+        //if (logger.isDebugEnabled()) {
+        //    logger.debug("Total time:" + (endTime - startTime));
+        //}
 
         String value = null;
         if (result) {
@@ -88,6 +88,11 @@ public class CassandraAccessor implements KVStoreInterface {
             }
         }
         return value;
+    }
+    
+    public String getRow(String columnFamily, String rowKey) throws Exception {
+    	String retVal = cassandraUtil.getRow(columnFamily, rowKey);
+    	return retVal;
     }
 
     public String direct_get(String keyspace, String columnFamily,

@@ -333,9 +333,9 @@ public abstract class Evaluator {
                     .get(columnFamily, rowKey, column);
                 long et = System.currentTimeMillis();
                 long tt = et - st;
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Query time:" + tt);
-                }
+                //if (logger.isDebugEnabled()) {
+                //    logger.debug("Query time:" + tt);
+                //}
                 
                 columnValue = new String(val);
 

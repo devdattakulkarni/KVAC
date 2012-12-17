@@ -170,7 +170,7 @@ public class PatientInfoSystemCODASPYExperimentsKVACINLibrary {
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         columnKey = "patient_info";
-        columnValue = "12345 Hogwarts Drive, Pippin Street, JacksonHole Montana";
+        columnValue = "56789 Hogwarts Drive, Pippin Street, JacksonHole Montana";
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         // doGet(accessor, keyspace, columnFamily, rowKey, columnKey);
@@ -239,7 +239,7 @@ public class PatientInfoSystemCODASPYExperimentsKVACINLibrary {
             nurseColVal, 1);
 
         String patientColFamily = "Patient";
-        String patientRowkey = "jeevan";
+        String patientRowkey = "johan";
         String patientColkey = "location";
         String patientColVal = "ward-3";
 
@@ -251,8 +251,8 @@ public class PatientInfoSystemCODASPYExperimentsKVACINLibrary {
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
-        patientColkey = "patient_reports_40";
-        patientColVal = "Cold and Flu - 40 12345 40";
+        patientColkey = "patient_reports";
+        patientColVal = "Cold and Flu - 10 12345 10";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
@@ -265,8 +265,8 @@ public class PatientInfoSystemCODASPYExperimentsKVACINLibrary {
             doctorColVal, 1);
 
         String queryColumnFamily = "Patient";
-        String queryRowKey = "jeevan";
-        String queryColumnKey = "patient_reports_40";
+        String queryRowKey = "johan";
+        String queryColumnKey = "patient_reports";
 
         do_library_get(accessor, keyspace, queryColumnFamily, queryRowKey,
             queryColumnKey);

@@ -71,6 +71,8 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
         log.debug("Total insertion time:" + totalTime);
         log.debug("Per record insertion time:" + avgInsertTimePerRecord);
     }
+    
+    
 
     @Test
     public void testGetColumnWithOneQueryToCFKVAC_IN_Cassandra()
@@ -162,14 +164,14 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
         String columnFamily = "Nurse";
         String rowKey = "devdatta";
         String columnKey = "location";
-        String columnValue = "ward-2";
+        String columnValue = "ward-3";
 
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
         columnFamily = "Patient";
-        rowKey = "james";
+        rowKey = "jjj";
         columnKey = "location";
-        columnValue = "ward-2";
+        columnValue = "ward-3";
 
         accessor.put(keyspace, columnFamily, rowKey, columnKey, columnValue, 1);
 
@@ -193,7 +195,7 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
             nurseColVal, 1);
 
         String patientColFamily = "Patient";
-        String patientRowkey = "john";
+        String patientRowkey = "ijk";
         String patientColkey = "location";
         String patientColVal = "ward-3";
 
@@ -205,8 +207,8 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
-        patientColkey = "patient_reports_40";
-        patientColVal = "Has cold. No flu symptoms - 40 12345 40";
+        patientColkey = "patient_reports_10";
+        patientColVal = "NN flu symptoms - 100 12345 100";
         accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
             patientColVal, 1);
 
@@ -219,8 +221,8 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
             doctorColVal, 1);
 
         String queryColumnFamily = "Patient";
-        String queryRowKey = "john";
-        String queryColumnKey = "patient_reports_40";
+        String queryRowKey = "ijk";
+        String queryColumnKey = "patient_reports_10";
         
         do_direct_get(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
     }
@@ -270,8 +272,62 @@ public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
         String queryColumnKey = "patient_reports_10";
         
         do_direct_get(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
-    }    
+    }
+    
+    // --------------------------------------------------------------------- //
+    
+    @Test
+    public void testGetColumnWithFiveQueriesToOneCF() throws Exception {
+    	
+    	String policyFilePath = "src/main/resources/DifferentDataModelForPatientInfoSystemPolicy.xml";
 
+        CassandraAccessor accessor = new CassandraAccessor(policyFilePath, user, password,
+            keyspace, server, port);
+
+        String patientColFamily = "Person";
+        String patientRowkey = "Peter";
+        String patientColkey = "location";
+        String patientColVal = "ward-3";
+
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+        
+        patientColkey = "nurse_location";
+        patientColVal = "ward-3";
+        
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+                patientColVal, 1);
+        
+        patientColkey = "doctor_location";
+        patientColVal = "ward-3";
+        
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+                patientColVal, 1);
+        
+        patientColkey = "nurse";
+        patientColVal = "devdatta";
+        
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+                patientColVal, 1);
+
+        patientColkey = "patient_reports";
+        patientColVal = "NN flu symptoms - 100 12345 100";
+        accessor.put(keyspace, patientColFamily, patientRowkey, patientColkey,
+            patientColVal, 1);
+
+        String queryColumnFamily = "Person";
+        String queryRowKey = "Peter";
+        String queryColumnKey = "patient_reports";
+        
+        do_direct_get(accessor, keyspace, queryColumnFamily, queryRowKey, queryColumnKey);
+        
+        log.info("Reading complete row.");
+        
+        String returnValue = accessor.getRow(queryColumnFamily, queryRowKey);
+        
+        log.info("Row contents:" + returnValue);        
+    }
+    
     private void do_direct_get(CassandraAccessor accessor, String keyspace,
         String queryColumnFamily, String queryRowKey, String queryColumnKey) throws Exception {
         long start = System.currentTimeMillis();
