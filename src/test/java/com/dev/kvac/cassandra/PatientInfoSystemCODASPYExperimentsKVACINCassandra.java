@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class PatientInfoSystemCODASPYExperimentsKVACINCassandra {
 
     private CassandraAccessor accessor;
-    private final Logger log = LoggerFactory.getLogger(DataSizeTest.class);
+    private final Logger log = LoggerFactory.getLogger(PatientInfoSystemCODASPYExperimentsKVACINCassandra.class);
     String user = "devdatta";
     String password = "devdatta";
     String keyspace = "PatientInfoSystem";

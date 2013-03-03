@@ -7,7 +7,10 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.cassandra.thrift.SchemaDisagreementException;
 import org.apache.cassandra.thrift.SlicePredicate;
 import org.apache.cassandra.thrift.SliceRange;
+import org.apache.cassandra.thrift.SuperColumn;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TFramedTransport;
@@ -170,6 +174,82 @@ public class CassandraUtil {
         }
     }
 
+    
+    public List<ColumnOrSuperColumn> get_slice(ByteBuffer key,
+			ColumnParent column_parent, SlicePredicate predicate,
+			ConsistencyLevel consistency_level, ByteBuffer parameterizedVariable) throws Exception {
+    	
+    	List<ColumnOrSuperColumn> colOrSuperCol = null;
+    	
+    	colOrSuperCol = thriftClient.get_slice(key, column_parent, predicate, consistency_level);
+    	
+    	
+    	return colOrSuperCol;    	
+    }
+    
+    public Map<String,String> get_super_col(String columnFamily, String rowKey, String column)
+            throws Exception {
+            ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
+            // String t1 = "jsmith";
+            //byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+            byte[] t1array = rowKey.getBytes("UTF8");
+            keyOfAccessor = ByteBuffer.wrap(t1array);
+
+            // 2.2 Create the ColumnPath
+            ColumnPath accessorColPath = new ColumnPath();
+            accessorColPath.setColumn_family(columnFamily);
+            accessorColPath.setSuper_column(column.getBytes());
+
+            SuperColumn superColumn;
+            Column retColumn;
+            ColumnOrSuperColumn retVal;
+            Map<String,String> versionMap = new HashMap<String,String>();
+            try {
+                ConsistencyLevel consistency_level = ConsistencyLevel
+                    .findByValue(1);            
+                
+                long start = System.currentTimeMillis();
+                retVal = thriftClient.get(keyOfAccessor, accessorColPath,
+                    consistency_level);
+                
+                retColumn = retVal.column;
+                superColumn = retVal.super_column;
+                
+                if (superColumn != null) {
+                	List<Column> cols = superColumn.getColumns();
+                	for(Column c: cols) {
+                		String name = getStringRepresentation(c.name);
+                		String value = getStringRepresentation(c.value);
+                		versionMap.put(name, value);
+                	}
+                }
+                long end = System.currentTimeMillis();
+                long totTime = end - start;
+                //log.debug("Query time:" + totTime);
+
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            return versionMap;
+        }
+    
+    private String getStringRepresentation(ByteBuffer key) {
+        Charset charset = Charset.forName("ISO-8859-1");
+        CharsetDecoder decoder = charset.newDecoder();
+        String columnName = null;
+        ByteBuffer keyNameByteBuffer = key.duplicate();
+        CharBuffer keyNameCharBuffer;
+        try {
+            keyNameCharBuffer = decoder.decode(keyNameByteBuffer);
+            columnName = keyNameCharBuffer.toString();
+        } catch (CharacterCodingException e1) {
+            e1.printStackTrace();
+        }
+        return columnName;
+    }
+
     public Object get(String columnFamily, String rowKey, String column)
         throws Exception {
         ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
@@ -186,7 +266,8 @@ public class CassandraUtil {
         Column retColumn;
         try {
             ConsistencyLevel consistency_level = ConsistencyLevel
-                .findByValue(1);
+                .findByValue(1);            
+            
             long start = System.currentTimeMillis();
             retColumn = thriftClient.get(keyOfAccessor, accessorColPath,
                 consistency_level).column;
@@ -250,6 +331,44 @@ public class CassandraUtil {
         return colNameColValue.toString().substring(0,
             colNameColValue.lastIndexOf("|"));
     }
+    
+    public void add_with_super_col(String keyspace, String columnFamily, String rowKey,
+            String column, String supercolumn, Object value, long timestamp) throws Exception {
+            ByteBuffer keyOfAccessor = ByteBuffer.allocate(6);
+
+            byte[] t1array = rowKey.getBytes(Charset.forName("ISO-8859-1"));
+            keyOfAccessor = ByteBuffer.wrap(t1array);
+
+            ColumnParent colParent = new ColumnParent();
+            colParent.setColumn_family(columnFamily);
+            colParent.setSuper_column(supercolumn.getBytes());
+            
+            Column col = new Column();
+            col.setName(column.getBytes());
+            
+            // Serialize to a byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(value);
+            out.close();
+
+            // Get the bytes of the serialized object
+            byte[] buf = bos.toByteArray();
+
+            // col.setValue(((String) value).getBytes());
+            //col.setValue(buf);
+            
+            ByteBuffer valueByteBuffer = ByteBuffer.allocate(6);
+            byte[] valByteArray = ((String)value).getBytes(Charset.forName("ISO-8859-1"));
+            valueByteBuffer = ByteBuffer.wrap(valByteArray);
+            
+            col.setValue(valueByteBuffer);
+            col.setTimestamp(timestamp);
+
+            ConsistencyLevel consistency_level = ConsistencyLevel.findByValue(1);
+            thriftClient.set_keyspace(keyspace);
+            thriftClient.insert(keyOfAccessor, colParent, col, consistency_level);
+        }    
 
     public void add(String keyspace, String columnFamily, String rowKey,
         String column, Object value, long timestamp) throws Exception {
@@ -262,7 +381,7 @@ public class CassandraUtil {
         colParent.setColumn_family(columnFamily);
         Column col = new Column();
         col.setName(column.getBytes());
-
+        
         // Serialize to a byte array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);

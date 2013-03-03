@@ -4,9 +4,15 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.ColumnParent;
+import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.SlicePredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -90,6 +96,13 @@ public class CassandraAccessor implements KVStoreInterface {
         return value;
     }
     
+    /*
+    public List<String> getAllCols() throws Exception {
+    	List<ColumnOrSuperColumn> get_slice(ByteBuffer key,
+    			ColumnParent column_parent, SlicePredicate predicate,
+    			ConsistencyLevel consistency_level)
+    } */
+    
     public String getRow(String columnFamily, String rowKey) throws Exception {
     	String retVal = cassandraUtil.getRow(columnFamily, rowKey);
     	return retVal;
@@ -100,6 +113,12 @@ public class CassandraAccessor implements KVStoreInterface {
         byte [] obj = (byte [])cassandraUtil.get(columnFamily, rowKey, columnKey);
         return new String(obj);
     }
+    
+    public Map<String,String> get_versions(String keyspace, String columnFamily,
+            String rowKey, String columnKey, long timestamp) throws Exception {
+            Map<String,String> vmap = cassandraUtil.get_super_col(columnFamily, rowKey, columnKey);
+            return vmap;
+        }
 
     public synchronized void put(String keyspace, String columnFamily,
         String rowKey, String columnKey, Object value, long timestamp)
@@ -107,6 +126,13 @@ public class CassandraAccessor implements KVStoreInterface {
         cassandraUtil.add(keyspace, columnFamily, rowKey, columnKey, value,
             timestamp);
     }
+    
+    public synchronized void put_with_super_col(String keyspace, String columnFamily,
+            String rowKey, String columnKey, String supercolumn, Object value, long timestamp)
+            throws Exception {
+		cassandraUtil.add_with_super_col(keyspace, columnFamily, rowKey,
+				columnKey, supercolumn, value, timestamp);            
+        }
 
     public void delete(String columnFamily, String rowKey, String column)
         throws Exception {
